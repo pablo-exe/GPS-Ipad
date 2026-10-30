@@ -84,7 +84,7 @@ public final class GpsServer implements AutoCloseable {
         for (int n = 0; n < 256; n++) {
             int b = in.read();
             if (b == -1) throw new EOFException();
-            if (b == '\n') return bytes.toString(StandardCharsets.UTF_8);
+            if (b == '\n') return new String(bytes.toByteArray(), StandardCharsets.UTF_8);
             bytes.write(b);
         }
         throw new IOException("Handshake demasiado grande");
