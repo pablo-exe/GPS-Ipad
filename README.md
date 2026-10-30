@@ -3,7 +3,7 @@
 <p align="center"><strong>Your Android's GPS. Your iPad's maps.</strong></p>
 
 <p align="center">
-  <a href="https://github.com/pablo-exe/GPS/actions/workflows/build.yml"><img src="https://github.com/pablo-exe/GPS/actions/workflows/build.yml/badge.svg" alt="Build and test status"></a>
+  <a href="https://github.com/pablo-exe/GPS-Ipad/actions/workflows/build.yml"><img src="https://github.com/pablo-exe/GPS-Ipad/actions/workflows/build.yml/badge.svg" alt="Build and test status"></a>
   <img src="https://img.shields.io/badge/version-0.2.0-168463?style=flat" alt="Version 0.2.0">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-273e48?style=flat" alt="MIT license"></a>
 </p>
@@ -31,12 +31,12 @@ Two small native apps, a local connection, and **no jailbreak**. The iPad needs 
 
 | App | Download | Requirements | Installation |
 | --- | --- | --- | --- |
-| **GPS Sender · Android** | [Download test APK](https://github.com/pablo-exe/GPS/actions/runs/41124247447/artifacts/13009922067) | Android **13+**, GNSS, and a Wi-Fi hotspot | Debug-signed APK · about **35 KB** |
-| **GPS Bridge · iPad/iPhone** | [Download unsigned IPA](https://github.com/pablo-exe/GPS/actions/runs/41124247447/artifacts/13009402948) | iOS/iPadOS **18+**, arm64 device | Sign and sideload · about **1 MB** |
+| **GPS Sender · Android** | [Download test APK](https://github.com/pablo-exe/GPS-Ipad/actions/runs/41124247447/artifacts/13009922067) | Android **13+**, GNSS, and a Wi-Fi hotspot | Debug-signed APK · about **35 KB** |
+| **GPS Bridge · iPad/iPhone** | [Download unsigned IPA](https://github.com/pablo-exe/GPS-Ipad/actions/runs/41124247447/artifacts/13009402948) | iOS/iPadOS **18+**, arm64 device | Sign and sideload · about **1 MB** |
 
 These links download **GitHub Actions ZIP archives**. Sign in to GitHub, extract the archive, and use the `.apk` or `.ipa` inside. The iOS artifact includes a SHA-256 checksum and third-party notices. Opening the IPA in Files does not install it: it must be signed first.
 
-**Artifacts expire after 14 days.** If a link has expired, open [Build MVP](https://github.com/pablo-exe/GPS/actions/workflows/build.yml), select a successful run, and find **Artifacts** at the bottom of its summary. If no current artifacts are available, use **Run workflow** if you have permission, or [build from source](#build-from-source).
+**Artifacts expire after 14 days.** If a link has expired, open [Build MVP](https://github.com/pablo-exe/GPS-Ipad/actions/workflows/build.yml), select a successful run, and find **Artifacts** at the bottom of its summary. If no current artifacts are available, use **Run workflow** if you have permission, or [build from source](#build-from-source).
 
 **Update both apps together.** v0.2 uses protocol v2 and does not support the original v0.1 protocol.
 
@@ -156,7 +156,7 @@ Last documented verification: **October 30, 2026**.
 | Scenario | Result | Evidence and scope |
 | --- | --- | --- |
 | Android → iPad → DVT → Core Location → Maps/Waze | **Confirmed on hardware** | Reported test with **v0.1 in the foreground**: movement/direction and stopping after connection loss. |
-| v0.2 APK/IPA, protocol, and DVT recovery | **Automated tests passed** | [Verified workflow run](https://github.com/pablo-exe/GPS/actions/runs/41124247447), commit `2f61fad`. DVT recovery uses a fake session in tests, not a physical iPad in CI. |
+| v0.2 APK/IPA, protocol, and DVT recovery | **Automated tests passed** | [Verified workflow run](https://github.com/pablo-exe/GPS-Ipad/actions/runs/41124247447), commit `2f61fad`. DVT recovery uses a fake session in tests, not a physical iPad in CI. |
 | v0.2 Android with screen off and forced Doze | **60/60 fresh samples** | API 35 emulator with battery exemption; also checks service/socket stop and CPU wake-lock release. |
 | v0.2 iPad background use alongside Waze/Spotify | **Implemented; extended hardware test pending** | Continuous operation is not yet a verified claim. |
 | Long sessions, iPad locking, and different iPadOS versions | **Pending** | Each device, OS, VPN, and signing combination needs checking. |
@@ -234,8 +234,8 @@ Record exact Android device/OS, iPad/iPadOS, LocalDevVPN, Waze, and signing meth
 ### Build from source
 
 ```sh
-git clone https://github.com/pablo-exe/GPS.git
-cd GPS
+git clone https://github.com/pablo-exe/GPS-Ipad.git
+cd GPS-Ipad
 ```
 
 **Android · Windows, Linux, or macOS**
@@ -278,13 +278,13 @@ The unsigned build command and IPA packaging steps are in [the Actions workflow]
 
 Protocol v2 answers **one outstanding request**, identified by `request_id`, with the latest available fix. It does not stream a queued route history. The previous protocol has been removed.
 
-CI tests the server over real TCP with synthetic GNSS, the Swift parser/worker with a fake DVT session, Android Lint, and both builds. `android-runtime` installs the APK on an isolated API 35 emulator, starts it through the app button, forces Doze with the screen off, and checks 60 samples, shutdown, and CPU wake-lock release. Evidence is available in **Android-runtime-evidence** from the [verified run](https://github.com/pablo-exe/GPS/actions/runs/41124247447).
+CI tests the server over real TCP with synthetic GNSS, the Swift parser/worker with a fake DVT session, Android Lint, and both builds. `android-runtime` installs the APK on an isolated API 35 emulator, starts it through the app button, forces Doze with the screen off, and checks 60 samples, shutdown, and CPU wake-lock release. Evidence is available in **Android-runtime-evidence** from the [verified run](https://github.com/pablo-exe/GPS-Ipad/actions/runs/41124247447).
 
 Tests cover duplicates, delayed replies, expiry during a handshake or slow DVT set, disconnects, retry behavior, and failed cleanup. **CI does not run a physical iPad's DVT services or verify actual iPadOS suspension behavior.**
 
 ## Community
 
-Tried it? [Open an issue](https://github.com/pablo-exe/GPS/issues/new) with device models, exact versions, installation method, reproduction steps, and Network/DVT/Core Location diagnostics. Say whether the apps were foregrounded, backgrounded, or locked. Do not attach RPPairing, credentials, active codes, or personal locations.
+Tried it? [Open an issue](https://github.com/pablo-exe/GPS-Ipad/issues/new) with device models, exact versions, installation method, reproduction steps, and Network/DVT/Core Location diagnostics. Say whether the apps were foregrounded, backgrounded, or locked. Do not attach RPPairing, credentials, active codes, or personal locations.
 
 Want to share the project? There is a [PNG cover and draft Twitter post](docs/COMMUNITY.md). The cover is a conceptual diagram; Android screenshots are real emulator captures. New reports help expand the compatibility matrix while keeping implemented features separate from verified behavior.
 

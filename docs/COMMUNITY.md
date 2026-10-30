@@ -6,7 +6,7 @@ Assets and copy for you to publish manually. No social post has been sent.
 
 ![GPS Bridge social cover](assets/social-preview.png)
 
-- [Download PNG, 1200 × 630](https://raw.githubusercontent.com/pablo-exe/GPS/main/docs/assets/social-preview.png).
+- [Download PNG, 1200 × 630](https://raw.githubusercontent.com/pablo-exe/GPS-Ipad/main/docs/assets/social-preview.png).
 - [Editable SVG](assets/social-preview.svg).
 - [Real emulator screenshots and image provenance](assets/README.md).
 
@@ -19,7 +19,7 @@ I built GPS Bridge: Android GNSS → iPad system location → Maps/Waze. No jail
 
 Two tiny native apps, local Wi-Fi, open source. v0.2 adds background sessions + reconnection; extended iPad testing is still pending.
 
-https://github.com/pablo-exe/GPS
+https://github.com/pablo-exe/GPS-Ipad
 ```
 
 ## Optional follow-up
