@@ -95,7 +95,15 @@ try:
     (OUT / "service-screen-off.txt").write_text(services)
     assert "isForeground=true" in services, "Location foreground service stopped"
     assert fixes >= 30, f"GNSS continuity failed: {fixes}/60 fresh samples"
-    adb("shell", "am", "stopservice", "-n", PACKAGE + "/.GpsService")
+    adb("shell", "dumpsys", "deviceidle", "unforce")
+    adb("shell", "dumpsys", "battery", "reset")
+    adb("shell", "input", "keyevent", "224")
+    adb("shell", "wm", "dismiss-keyguard")
+    adb("shell", "am", "start", "-W", "-n", PACKAGE + "/.MainActivity")
+    root = hierarchy()
+    button = next(n for n in root.iter("node") if n.get("text", "").casefold() == "detener gps")
+    x1, y1, x2, y2 = map(int, re.findall(r"\d+", button.attrib["bounds"]))
+    adb("shell", "input", "tap", str((x1 + x2) // 2), str((y1 + y2) // 2))
     assert stream.readline() == b"", "Stopping service did not close GPS socket"
     logs = adb("logcat", "-d")
     (OUT / "logcat.txt").write_text(logs)
@@ -105,7 +113,8 @@ finally:
     if client:
         client.close()
     (OUT / "synthetic-samples.json").write_text(json.dumps(samples))
-    adb("shell", "am", "stopservice", "-n", PACKAGE + "/.GpsService")
+    # Cleanup only this disposable emulator package; GpsService stays non-exported.
+    adb("shell", "am", "force-stop", PACKAGE)
     adb("shell", "dumpsys", "deviceidle", "unforce")
     adb("shell", "dumpsys", "battery", "reset")
     adb("shell", "input", "keyevent", "224")
