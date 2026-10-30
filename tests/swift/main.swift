@@ -50,13 +50,14 @@ final class FakeDVT: DVTSession {
     var sets = 0, connects = 0, clears = 0
     var failConnect = 0, failSet = 0, failClear = 0
     var duringConnect: (() -> Void)?
+    var duringSet: (() -> Void)?
     func connect(pairingPath: String, ip: String, port: UInt16) throws {
         connects += 1
         if failConnect > 0 { failConnect -= 1; throw FakeError.disconnected }
         isActive = true; duringConnect?()
     }
     func set(_ fix: ReceivedFix) throws {
-        if failSet > 0 { failSet -= 1; throw FakeError.disconnected }; sets += 1
+        if failSet > 0 { failSet -= 1; throw FakeError.disconnected }; sets += 1; duringSet?()
     }
     func clear() throws {
         clears += 1; isActive = false
@@ -98,6 +99,14 @@ do {
     worker.mailbox.put(try sample(clock))
     engine.duringConnect = { worker.mailbox.put(nil) }
     worker.step(config); precondition(engine.sets == 0 && !engine.isActive, "Disconnect during handshake cancels injection")
+}
+do {
+    let clock = Clock(), engine = FakeDVT()
+    let worker = InjectionWorker(engine: engine, now: { clock.time }, report: { _ in })
+    worker.mailbox.put(try sample(clock))
+    engine.duringSet = { clock.time = 3; worker.mailbox.put(try! sample(clock, seq: 2)) }
+    worker.step(config)
+    precondition(!engine.isActive, "New GPS arrival must not mask expiry of the fix still being injected by a slow DVT call")
 }
 do {
     let clock = Clock(), engine = FakeDVT()

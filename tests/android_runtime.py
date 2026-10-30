@@ -105,6 +105,9 @@ try:
     x1, y1, x2, y2 = map(int, re.findall(r"\d+", button.attrib["bounds"]))
     adb("shell", "input", "tap", str((x1 + x2) // 2), str((y1 + y2) // 2))
     assert stream.readline() == b"", "Stopping service did not close GPS socket"
+    stopped_power = adb("shell", "dumpsys", "power")
+    (OUT / "power-after-stop.txt").write_text(stopped_power)
+    assert not re.search(r"^\s+PARTIAL_WAKE_LOCK.*'GPSBridge:Navigation'", stopped_power, re.MULTILINE), "GPS CPU lock leaked after stop"
     logs = adb("logcat", "-d")
     (OUT / "logcat.txt").write_text(logs)
     assert "FATAL EXCEPTION" not in logs

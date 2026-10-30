@@ -99,7 +99,7 @@ final class InjectionWorker: @unchecked Sendable {
             let began = now()
             try engine.set(newest)
             lastSample = newest.sampleID; retry.reset(); retryAt = 0
-            if mailbox.get().map({ $0.streamID == config.streamID && $0.isFresh(at: now()) }) != true {
+            if !newest.isFresh(at: now()) || mailbox.get().map({ $0.streamID == config.streamID && $0.isFresh(at: now()) }) != true {
                 if !clean("GPS caducó durante la inyección") { retryAt = now() + retry.nextDelay() }
             } else { report("DVT aceptó posición \(newest.frame.seq ?? 0) · \(Int((now() - began) * 1000)) ms") }
         } catch {
