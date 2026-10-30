@@ -32,6 +32,7 @@ for permission in ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION", "POST_NOTIF
 adb("shell", "dumpsys", "deviceidle", "whitelist", "+" + PACKAGE)
 adb("logcat", "-c")
 client = None
+samples = []
 try:
     adb("shell", "am", "start", "-W", "-n", PACKAGE + "/.MainActivity")
     root = hierarchy()
@@ -55,18 +56,32 @@ try:
     stream = client.makefile("rwb", buffering=0)
     stream.write((json.dumps({"v": 2, "token": token}, separators=(",", ":")) + "\n").encode())
     assert json.loads(stream.readline())["type"] == "hello"
+
+    def sample(request):
+        result = adb("emu", "geo", "fix", "-3.7038", "40.4168")
+        assert "OK" in result, result
+        time.sleep(1)
+        stream.write((json.dumps({"v": 2, "request_id": request}, separators=(",", ":")) + "\n").encode())
+        frame = json.loads(stream.readline())
+        assert frame["request_id"] == request
+        samples.append(frame)
+        return frame
+
+    # Allow the virtual GNSS HAL to deliver the new test point before entering Doze.
+    acquired = False
+    for request in range(1, 21):
+        frame = sample(request)
+        if frame["type"] == "fix" and abs(frame["lat"] - 40.4168) < 0.001 and abs(frame["lon"] + 3.7038) < 0.001:
+            acquired = True
+            break
+    assert acquired, f"Emulator GNSS did not acquire the test point: {samples[-3:]}"
     adb("shell", "input", "keyevent", "223")  # KEYCODE_SLEEP: Activity.onStop must not end GPS.
     adb("shell", "dumpsys", "battery", "unplug")
     adb("shell", "dumpsys", "deviceidle", "force-idle")
     fixes = 0
     last_seq = 0
-    for request in range(1, 61):
-        # Synthetic GNSS from the emulator's virtual hardware, no real location data.
-        adb("emu", "geo", "fix", "-3.7038", "40.4168")
-        time.sleep(0.8)
-        stream.write((json.dumps({"v": 2, "request_id": request}, separators=(",", ":")) + "\n").encode())
-        frame = json.loads(stream.readline())
-        assert frame["request_id"] == request
+    for request in range(100, 160):
+        frame = sample(request)
         if frame["type"] == "fix":
             assert abs(frame["lat"] - 40.4168) < 0.001
             assert 0 <= frame["age_ms"] < 2500
@@ -89,6 +104,8 @@ try:
 finally:
     if client:
         client.close()
+    (OUT / "synthetic-samples.json").write_text(json.dumps(samples))
+    adb("shell", "am", "stopservice", "-n", PACKAGE + "/.GpsService")
     adb("shell", "dumpsys", "deviceidle", "unforce")
     adb("shell", "dumpsys", "battery", "reset")
     adb("shell", "input", "keyevent", "224")
