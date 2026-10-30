@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-labelledby="title desc">
+  <title id="title">Android pone el GPS; el iPad pone el mapa</title>
+  <desc id="desc">Diagrama: GPS Sender obtiene GNSS en Android, lo transmite por el hotspot a GPS Bridge y DVT entrega las coordenadas a Core Location para Maps y Waze.</desc>
+  <rect width="1200" height="320" rx="20" fill="#f2f6f3"/>
+  <g font-family="Segoe UI,Arial,sans-serif">
+    <rect x="48" y="58" width="94" height="180" rx="18" fill="#122b28"/>
+    <path d="M81 73h28" stroke="#91d4ae" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="95" cy="139" r="27" fill="none" stroke="#3ddc84" stroke-width="2"/>
+    <circle cx="95" cy="139" r="7" fill="#3ddc84"/>
+    <path d="M95 101v15m0 46v15m-38-38h15m46 0h15" stroke="#3ddc84" stroke-width="2"/>
+    <text x="172" y="127" font-size="29" font-weight="700" fill="#122b28">Android</text>
+    <text x="172" y="163" font-size="22" fill="#435b50">GPS Sender</text>
+    <text x="172" y="195" font-size="18" fill="#435b50">GNSS del teléfono</text>
+    <path d="M366 149h142" stroke="#32815a" stroke-width="3"/>
+    <path d="m499 142 12 7-12 7" fill="none" stroke="#32815a" stroke-width="3"/>
+    <text x="438" y="117" text-anchor="middle" font-size="20" font-weight="600" fill="#274c3a">Hotspot Wi-Fi</text>
+    <text x="438" y="189" text-anchor="middle" font-size="17" fill="#435b50">Red local · TCP</text>
+    <rect x="550" y="66" width="174" height="166" rx="14" fill="#142b36"/>
+    <rect x="562" y="78" width="150" height="142" rx="5" fill="#e4ece7"/>
+    <path d="M568 104h62l36 52h40M587 82v49l-20 51m102-99-27 62v70m-74-10 42-45h97" stroke="#b1c2ba" stroke-width="4" fill="none"/>
+    <path d="M585 197v-42h55v-38h49" fill="none" stroke="#1d7c92" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="640" cy="155" r="9" fill="#1d7c92" stroke="#fff" stroke-width="3"/>
+    <text x="752" y="118" font-size="29" font-weight="700" fill="#122b28">iPad</text>
+    <text x="752" y="154" font-size="22" fill="#435b50">GPS Bridge</text>
+    <text x="752" y="187" font-size="18" fill="#435b50">DVT → Core Location</text>
+    <path d="M972 149h39" stroke="#1d7c92" stroke-width="3"/>
+    <path d="m1004 142 12 7-12 7" fill="none" stroke="#1d7c92" stroke-width="3"/>
+    <text x="1040" y="138" font-size="24" font-weight="700" fill="#122b28">Maps</text>
+    <text x="1040" y="172" font-size="24" font-weight="700" fill="#122b28">Waze</text>
+    <text x="600" y="282" text-anchor="middle" font-size="18" fill="#435b50">Ubicación del sistema · Apps de navegación normales · Sin backend propio</text>
+  </g>
+</svg>
