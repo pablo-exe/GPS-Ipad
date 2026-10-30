@@ -35,7 +35,8 @@ client = None
 try:
     adb("shell", "am", "start", "-W", "-n", PACKAGE + "/.MainActivity")
     root = hierarchy()
-    button = next(n for n in root.iter("node") if n.get("text") == "Iniciar GPS en segundo plano")
+    ET.ElementTree(root).write(OUT / "sender-initial.xml", encoding="utf-8")
+    button = next(n for n in root.iter("node") if n.get("text", "").casefold() == "iniciar gps en segundo plano")
     x1, y1, x2, y2 = map(int, re.findall(r"\d+", button.attrib["bounds"]))
     adb("shell", "input", "tap", str((x1 + x2) // 2), str((y1 + y2) // 2))
     token = None

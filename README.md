@@ -55,6 +55,8 @@ DVT transmite **latitud y longitud**. La precisión es un filtro/diagnóstico An
 
 CI compila ambas apps, ejecuta Android Lint, prueba el servidor sobre TCP real con GNSS sintético y ejercita el receptor/motor de recuperación con un DVT simulado. Comprueba framing, límites, correlación de peticiones, latencia, caducidad, duplicados, sustitución de sockets, reintentos, fallos de limpieza y desconexión durante un handshake bloqueante. Estas pruebas no prueban el servicio DVT de un dispositivo Apple ni su política real de suspensión.
 
+El job `android-runtime` instala el APK en un emulador API 35 aislado, inicia el servicio desde su botón, apaga la pantalla y fuerza Doze con la excepción de batería concedida. Solicita 60 muestras de GNSS sintético y comprueba la parada explícita del servicio/socket. Capturas, estado de energía y logs se guardan en **Android-runtime-evidence**. Ese ensayo verifica el comportamiento de Android emulado; no sustituye la prueba de GNSS, hotspot y batería del teléfono real.
+
 Antes de dar por verificada esta versión en los dispositivos:
 
 - [ ] Iniciar ambas apps, comprobar Core Location, minimizar GPS Bridge y mantener Waze + Spotify al menos 20–30 minutos con movimiento. Verificar que Spotify no se pausa y Waze sigue el punto.
