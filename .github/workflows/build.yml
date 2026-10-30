@@ -48,7 +48,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Test stream framing and freshness
         run: |
-          swiftc ios/GPSBridge/Protocol.swift tests/swift/main.swift -o /tmp/gps-protocol-tests
+          swiftc ios/GPSBridge/Protocol.swift ios/GPSBridge/InjectionWorker.swift tests/swift/main.swift -o /tmp/gps-protocol-tests
           /tmp/gps-protocol-tests
       - name: Download pinned FFI (hash checked)
         run: python3 scripts/prepare_ios_vendor.py

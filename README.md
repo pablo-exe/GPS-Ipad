@@ -1,70 +1,82 @@
-# GPS Bridge · MVP
+# GPS Bridge · 0.2.0
 
-GPS real de Android → hotspot Wi-Fi → app iPad → servicio de simulación DVT → ubicación del sistema.
+GNSS Android → hotspot Wi-Fi → iPad → DVT → Core Location → Maps/Waze.
 
-Dos apps nativas pequeñas, sin backend, mapas, rutas, publicidad ni servicios de segundo plano. Android usa `GPS_PROVIDER`; iOS usa SwiftUI, Network.framework y la FFI `idevice` que distribuye Locus. No hace falta compilar Rust.
+Dos apps nativas, sin backend ni historial de trayectos. Android utiliza `GPS_PROVIDER`; iOS usa SwiftUI, Network.framework, Core Location y la FFI `idevice` distribuida por Locus. IPA para dispositivos arm64; no hace falta compilar Rust.
 
-**Alcance:** experimento de viabilidad en primer plano. Compilar, recibir coordenadas y que DVT devuelva éxito son comprobaciones diferentes. Maps/Waze y la convivencia hotspot + LocalDevVPN se deben verificar en el iPad real. El MVP no monta imágenes de desarrollador ni implementa emparejamiento dentro de la app.
+**Estado:** el 30/10/2026 el usuario confirmó con la versión 0.1 la recepción, DVT, la marca «Simulada por software», seguimiento de movimiento/dirección en Maps y Waze, y parada al cortar conexión. La versión 0.2 añade segundo plano, pantalla Android apagada y recuperación automática. La continuidad de esta nueva versión en los dispositivos reales y junto a Spotify requiere repetir las pruebas de abajo; una compilación correcta no demuestra sesiones largas sin cortes.
 
-## Descargar e instalar
+## Instalar / actualizar
 
-Abre [Actions → Build MVP](https://github.com/pablo-exe/GPS/actions/workflows/build.yml), entra en una ejecución correcta y descarga sus **Artifacts** (requiere iniciar sesión en GitHub):
+En [Actions → Build MVP](https://github.com/pablo-exe/GPS/actions/workflows/build.yml), abre la última ejecución correcta y descarga sus **Artifacts**:
 
-- **GPS-Sender-Android**: descomprime e instala `app-debug.apk`. Android puede pedir permitir instalaciones desde esa aplicación. Está firmado con la clave debug del runner; para actualizar desde otra ejecución puede ser necesario desinstalar la copia anterior. No guarda datos de usuario.
-- **GPS-Bridge-iOS-unsigned**: descomprime `GPS-Bridge-unsigned.ipa`. Está compilada para dispositivos arm64, **sin firma**. Fírmala e instálala con [Sideloadly](https://sideloadly.io/), [SideStore](https://sidestore.io/) o el método de sideload que utilices. No basta con abrir la IPA en Archivos. La firma, el perfil y su caducidad los gestiona el instalador con tu cuenta Apple. Activa Modo de desarrollador.
+- **GPS-Sender-Android**: instala `app-debug.apk` en Android **13 o posterior**. Está firmado para pruebas con la clave debug del runner. Si una actualización dice que la firma no coincide, detén la sesión y desinstala la copia anterior antes de instalar.
+- **GPS-Bridge-iOS-unsigned**: firma e instala `GPS-Bridge-unsigned.ipa` con [Sideloadly](https://sideloadly.io/), [SideStore](https://sidestore.io/) o tu instalador habitual. Requiere iOS/iPadOS 18 o posterior y Modo de desarrollador. La cuenta Apple, perfil y caducidad de firma los gestiona tu instalador, sin secretos Apple en GitHub.
 
-Las compilaciones no necesitan certificados ni secretos Apple en GitHub. Los artefactos caducan a los 14 días; puedes volver a ejecutar el workflow manualmente.
+**Actualiza las dos apps:** 0.2 utiliza protocolo v2 y elimina v1. No mezcles APK e IPA de distintas versiones. Los artefactos caducan a los 14 días; puedes ejecutar el workflow manualmente.
 
-## Primera prueba: solo recepción
+## Preparación única del iPad
 
-1. Activa **compartir Internet / hotspot** en Android y conecta el iPad a esa red.
-2. Abre **GPS Sender** en Android. Pulsa **Iniciar GPS** y permite **ubicación precisa mientras se usa la app**. Para captar GNSS, prueba cerca de una ventana o en exterior.
-3. La pantalla muestra las IPv4 locales y un código nuevo de seis cifras. Usa la dirección de la interfaz del hotspot, no una de VPN. Si hay varias, prueba la que aparece como puerta de enlace/router de esa Wi-Fi en el iPad; no hay una IP universal para todos los Android.
-4. Abre **GPS Bridge** en el iPad. Permite acceso a **red local**. Introduce esa IP y el código. Deja la inyección apagada y pulsa **Conectar**.
-5. Las coordenadas y el número de posición deben actualizarse. Esta prueba funciona sin RPPairing ni túnel DVT. Repítela también con LocalDevVPN conectado: comprueba así que la VPN conserva el acceso LAN.
+1. Activa **Ajustes → Privacidad y seguridad → Modo de desarrollador**.
+2. Con [idevice_pair](https://github.com/jkcoxson/idevice_pair/releases) en Windows/macOS, conecta el iPad por USB, desbloquea, acepta Confiar y genera **Remote pairing / RPPairing** para ese mismo dispositivo. Lockdown/SideStore no sirve.
+3. Transfiere el archivo privadamente a Archivos del iPad e impórtalo en GPS Bridge. Si actualizas conservando los datos de la app, no hace falta importarlo otra vez. No subas el archivo a GitHub, issues ni logs: contiene material de emparejamiento.
+4. Conecta [LocalDevVPN](https://apps.apple.com/app/id6755608044). El endpoint inicial es `10.7.0.1:49152`; ajusta IP/puerto si tu configuración utiliza otros.
+5. Si no está disponible `LocationSimulation`, prepara los servicios/imagen de desarrollador con Xcode o tu herramienta habitual. Este proyecto no monta DDI ni hace pairing dentro de la app.
 
-Mantén las dos apps abiertas. Android mantiene la pantalla encendida durante el envío. Al poner cualquiera en segundo plano se detiene su parte de la sesión; hay que iniciar/conectar de nuevo.
+## Empezar una sesión
 
-## Segunda prueba: ubicación del sistema
+1. Activa el hotspot Android y conecta el iPad. Desactiva el **apagado automático del hotspot** si el fabricante lo permite.
+2. Abre **GPS Sender** y pulsa **Iniciar GPS en segundo plano**. Permite ubicación **precisa mientras se usa la app** y notificaciones. La notificación mantiene visible la sesión y ofrece **Detener GPS**. No se necesita permiso de ubicación «todo el tiempo»: el servicio se inicia desde la app visible.
+3. Pulsa **Permitir GPS continuo con pantalla apagada** y acepta la excepción de optimización de batería para esta app. Revisa también las restricciones adicionales de batería del fabricante. El servicio usa un bloqueo parcial de CPU solo durante la sesión; no mantiene la pantalla encendida ni modifica por sí mismo el hotspot.
+4. Introduce en **GPS Bridge** la IP local Android y el código mostrado. Si hay varias direcciones, usa la interfaz del hotspot; la dirección «router/puerta de enlace» de esa Wi-Fi en el iPad ayuda a identificarla. No hay una IP universal.
+5. Permite **red local** y **ubicación mientras se usa la app** en el iPad. Activa la inyección, revisa RPPairing/LocalDevVPN y pulsa **Conectar**. Si el primer intento abre el permiso de ubicación, concédelo y vuelve a conectar.
+6. Comprueba **Red**, **DVT aceptó posición** y **Core Location observado**. Después abre **Waze a pantalla completa** y Spotify como prefieras; GPS Bridge puede quedar minimizado. Android puede bloquearse o apagar su pantalla, permaneciendo encendido con hotspot activo.
 
-Preparación única:
+En iPadOS se declara background location y se mantienen `CLBackgroundActivitySession` y actualizaciones de Core Location sin pausa automática. El sistema puede mostrar el indicador de ubicación en segundo plano. No se usa audio de mantenimiento ni se modifica `AVAudioSession`, para no reclamar la reproducción de Spotify. El comportamiento final también depende de iPadOS, LocalDevVPN y la firma instalada.
 
-1. Activa **Ajustes → Privacidad y seguridad → Modo de desarrollador** en el iPad; acepta el reinicio si se solicita.
-2. En Windows o macOS, descarga [idevice_pair](https://github.com/jkcoxson/idevice_pair/releases). Conecta el iPad por USB, desbloquéalo y acepta **Confiar**.
-3. Genera un archivo **Remote pairing / RPPairing** para ese mismo iPad. Un archivo Lockdown/SideStore no sirve. Transfiérelo de forma privada a Archivos en el iPad. **Contiene material de emparejamiento: no lo subas al repositorio, a issues ni a logs.**
-4. Instala y conecta [LocalDevVPN](https://apps.apple.com/app/id6755608044). La configuración inicial del MVP es `10.7.0.1:49152`; ajusta ambos campos si tu versión usa otros valores.
-5. Si DVT informa de que falta `LocationSimulation`, prepara los servicios/imagen de desarrollador con Xcode o con tu herramienta habitual (por ejemplo StikDebug). Tener un RPPairing no demuestra que DVT esté listo. Este MVP muestra el fallo y no añade un montador DDI.
+No fuerces el cierre del receptor desde el selector de apps, ni detengas el servicio Android desde el sistema. Si el sistema mata un proceso, no se promete su resurrección automática: vuelve a abrir e iniciar la app afectada. Bloquear/minimizar no equivale a forzar detención. Tras reiniciar Android debes iniciar una sesión nueva y copiar su nuevo código; la IP/túnel del iPad se recuerdan.
 
-Prueba:
+## Reconexión y posiciones caducadas
 
-1. Detén la recepción en GPS Bridge. Activa **Inyectar en la ubicación del sistema** e **Importar RPPairing**. Selecciona el archivo anterior. La app valida su formato con `idevice` y guarda una copia privada, protegida y excluida de copias de seguridad.
-2. Inicia Android, revisa IP/código y pulsa **Conectar** en el iPad.
-3. Comprueba los tres niveles del diagnóstico: **Red**, **DVT aceptó posición** y **Core Location observado**. Permite ubicación mientras se usa GPS Bridge para este último diagnóstico. El campo de Core Location muestra la marca de simulación y coordenadas que realmente entrega el sistema.
-4. En el iPad abre **Maps o Waze junto a GPS Bridge**, con ventanas simultáneas / Split View según tu versión de iPadOS. GPS Bridge debe seguir visible; cambiar a otra app a pantalla completa puede enviarlo a segundo plano y detenerlo. Comprueba que el punto sigue al Android al caminar. Si tu modo de ventanas no mantiene el receptor ejecutándose, usa primero el diagnóstico Core Location de la propia app.
-5. Pulsa **Detener y limpiar simulación**. Revisa el resultado DVT y Maps. Una limpieza aceptada no garantiza una nueva posición física inmediata en un iPad Wi-Fi sin GNSS.
+- **Red y DVT se recuperan de forma independiente**, con espera de 1, 2, 4 y como máximo 8 segundos entre fallos consecutivos. Un cambio de ruta de red puede adelantar el siguiente intento LAN. No hace falta pulsar Conectar tras una caída Wi-Fi breve si no has detenido la sesión.
+- El código Android permanece durante la sesión del servicio. Apagar/encender Wi-Fi o minimizar la app no lo cambia. Detener y volver a iniciar Android genera un código nuevo; un código incorrecto detiene los intentos del iPad y exige corregirlo.
+- Un socket antiguo no bloquea la recuperación: un cliente recién autenticado reemplaza al anterior. Los clientes sin peticiones caducan en 5 segundos; los handshakes tienen un límite total de 3 segundos.
+- **Protocolo v2 por petición/respuesta**: iPad solicita la última posición hasta 2 veces por segundo. Cada respuesta debe corresponder a su petición pendiente. Se suma el **RTT completo** a la edad GNSS como cota conservadora del transporte. Respuestas de más de 1,5 s se descartan y se renueva TCP; una petición sin respuesta vence en 2 s.
+- Solo se acepta GNSS Android no simulado y con precisión de 0–100 m. **Edad total menor de 2,5 s** (captura Android + cota RTT + tiempo en el receptor). Un duplicado no rejuvenece la posición. No se extrapola dentro de túneles ni se reproduce una cola de coordenadas.
+- Al perder GNSS válido o TCP se invalida inmediatamente el buzón y se intenta `stopLocationSimulation`. Cuando vuelve GPS reciente, DVT se reconstruye y continúa automáticamente. Tras un handshake lento se vuelve a leer el buzón antes de inyectar.
+- Si falla la limpieza, el estado es **ubicación desconocida**, nunca «restaurada». Durante una sesión abierta se reintenta recuperar DVT y limpiarlo incluso sin GPS. Cada sesión DVT nueva limpia cualquier simulación anterior antes de admitir posiciones.
+- Al pulsar **Detener y limpiar simulación**, se solicita tiempo de ejecución para limpiar antes de soltar la sesión de ubicación. Las llamadas FFI tienen timeout de 3 s por operación; varios pasos bloqueantes pueden retrasar la limpieza. El umbral de caducidad no es una garantía del plazo en que iPadOS deja de mostrar el punto anterior. Forzar cierre, perder LocalDevVPN o matar el proceso puede impedir la limpieza.
 
-La única aceptación de viabilidad completa es observar en el dispositivo que Core Location y Maps/Waze siguen al GNSS Android. No se afirma todavía continuidad en segundo plano, bloqueo de pantalla o conducción.
+El diagnóstico muestra edad máxima estimada, RTT de red, reconexiones y respuestas retrasadas descartadas. Comprueba el estado de las apps si Waze deja de seguirte; la red, GNSS o iPadOS pueden interrumpir el puente. Este comportamiento todavía requiere validación sostenida en tu combinación de hardware.
 
-## Pérdidas de señal y límites
+DVT transmite **latitud y longitud**. La precisión es un filtro/diagnóstico Android, no una precisión enviada al sistema. Las apps pueden detectar posiciones simuladas. El código LAN limita conexiones casuales y no cifra TCP: usa un hotspot protegido, sin exponer el puerto 8765 a Internet. RPPairing no sale del iPad.
 
-- Android solicita GNSS cada 500 ms; el hardware decide la frecuencia real. TCP envía la posición más reciente cada 500 ms. iOS inyecta cada **posición nueva**, como máximo a 2 Hz; los duplicados no refrescan su caducidad.
-- Solo admite posiciones no simuladas en Android, precisión de 0–100 m y edad menor de **2,5 s**. Esa edad combina el tiempo monotónico desde la captura en Android y desde la recepción en iOS. No incluye el tránsito de red no medido: una pausa de TCP puede añadir latencia. Se comprueba expresamente al probar en hardware.
-- Sin GPS reciente se invalida el buzón y se intenta `stopLocationSimulation`. Al cerrar el TCP o detener se hace lo mismo. Sin tráfico durante 5 s se cierra la recepción. No hay reconexiones automáticas ni historial de coordenadas.
-- DVT corre en una cola independiente, con timeout de la librería de 3 s por operación. Un handshake o llamada bloqueante puede retrasar la limpieza; 2,5 s es el umbral de caducidad, **no una garantía de que iPadOS haya limpiado en ese plazo**.
-- Si falla la limpieza, la pantalla indica **estado de ubicación desconocido**. Comprueba Maps; reconecta LocalDevVPN y la app para abrir una sesión que primero limpia DVT. Si sigue simulada, reinicia el iPad y verifica de nuevo.
-- DVT recibe **solo latitud y longitud**. La precisión se usa para filtrar y diagnosticar; no se transmite como precisión del sistema. Las apps pueden detectar o rechazar ubicaciones simuladas.
-- El código de seis cifras limita conexiones casuales, sin cifrar TCP. Úsalo en tu hotspot protegido y no redirijas el puerto 8765 a Internet. El emparejamiento Apple nunca se transmite al Android. Solo un cliente TCP simultáneo.
+## Pruebas y aceptación
 
-## Compilar
+CI compila ambas apps, ejecuta Android Lint, prueba el servidor sobre TCP real con GNSS sintético y ejercita el receptor/motor de recuperación con un DVT simulado. Comprueba framing, límites, correlación de peticiones, latencia, caducidad, duplicados, sustitución de sockets, reintentos, fallos de limpieza y desconexión durante un handshake bloqueante. Estas pruebas no prueban el servicio DVT de un dispositivo Apple ni su política real de suspensión.
 
-**Windows local:** el APK se puede compilar con JDK 17, Android SDK 35 y Gradle 8.11.1. No se necesita Android Studio si ya tienes esos componentes:
+Antes de dar por verificada esta versión en los dispositivos:
+
+- [ ] Iniciar ambas apps, comprobar Core Location, minimizar GPS Bridge y mantener Waze + Spotify al menos 20–30 minutos con movimiento. Verificar que Spotify no se pausa y Waze sigue el punto.
+- [ ] Bloquear Android durante ese periodo; comprobar notificación de servicio y continuidad GNSS.
+- [ ] Desactivar GNSS y reactivarlo: no seguir inyectando el último punto y recuperar automáticamente.
+- [ ] Cortar Wi-Fi/hotspot 10–20 s y restaurarlo con la misma IP/código: limpiar/reconectar sin tocar Conectar.
+- [ ] Desconectar/reconectar LocalDevVPN: mostrar el fallo/estado desconocido cuando corresponda y recuperar limpieza + inyección.
+- [ ] Detener desde notificación Android y desde el iPad; comprobar Maps después de cada parada. Al empezar una sesión Android nueva, introducir el código nuevo.
+- [ ] Probar bloqueo del iPad, restricciones de batería y cierre forzado por separado; anotar versiones exactas de Android, iPadOS, LocalDevVPN y Waze y los límites observados.
+
+No confundas un punto que permanece en pantalla con inyección continua: mira edad, marca de simulación, movimiento real y resultado de limpieza.
+
+## Compilar y recuperar
+
+En Windows puedes compilar APK con JDK 17, SDK Android 35 y Gradle 8.11.1:
 
 ```powershell
 cd android
 gradle :app:assembleDebug :app:lintDebug
 ```
 
-**iOS:** se necesita macOS con Xcode y su SDK. Desde este PC Windows, el runner macOS de GitHub Actions es la opción directa. En un Mac local puedes generar y abrir el proyecto, seleccionar tu equipo Apple y ejecutar en el iPad:
+iOS requiere macOS + Xcode. GitHub Actions cubre la compilación desde Windows. En un Mac:
 
 ```sh
 python3 scripts/prepare_ios_vendor.py
@@ -74,22 +86,8 @@ xcodegen generate
 open GPSBridge.xcodeproj
 ```
 
-El script descarga la FFI arm64 para **dispositivo**, no simulador, desde un commit fijo de Locus y valida SHA-256 de biblioteca, cabecera y módulo. El repositorio no almacena sus 95 MB ni necesita recompilarla. Las pruebas del parser son Foundation puro y se ejecutan en macOS sin esa FFI.
+Selecciona tu equipo de firma para ejecutar en un iPad. El script descarga desde el commit fijo de Locus la FFI arm64 **de dispositivo**, cabecera y módulo, verifica SHA-256 y evita almacenar 95 MB en Git. El parser y el worker se prueban en macOS con Foundation y un DVT falso, sin necesitar esa biblioteca.
 
-## Validación y vuelta atrás
+Recuperación: detén ambas sesiones y revisa Maps/Core Location. Si no puedes confirmar la limpieza, recupera LocalDevVPN e inicia/detén GPS Bridge; si sigue simulada, reinicia el iPad y verifica. Puedes volver a los [artefactos de la versión 0.1 comprobada](https://github.com/pablo-exe/GPS/actions/runs/41109884058) mientras estén disponibles; APK e IPA deben volver juntos y habrá que restaurar sus limitaciones de primer plano. Desinstalar elimina las apps, no modifica el hotspot ni LocalDevVPN ni otros servicios del workspace.
 
-CI compila APK + IPA, ejecuta Android Lint, una prueba TCP real con coordenadas sintéticas y pruebas Swift de framing, rangos, buffers y caducidad. Estas pruebas no ejercitan RPPairing, LocalDevVPN, DVT ni GNSS físicos.
-
-Lista de aceptación manual:
-
-- [ ] Android obtiene GNSS reciente; el iPad recibe el mismo punto por hotspot.
-- [ ] La recepción continúa con LocalDevVPN conectado.
-- [ ] RPPairing abre DVT y Core Location observa las coordenadas inyectadas.
-- [ ] Maps sigue al Android; repetir con Waze y anotar versiones exactas.
-- [ ] Detener Android, desactivar GPS y desconectar Wi-Fi provocan caducidad/limpieza, sin seguir reinyectando el último punto.
-- [ ] Detener GPS Bridge y mandarlo a segundo plano limpian la simulación; comprobar también el cierre forzado, donde no se garantiza ejecutar código de limpieza.
-- [ ] Después de cada prueba y tras reiniciar, Maps vuelve a una ubicación no simulada o deja de mostrar un punto simulado antiguo.
-
-Recuperación: detener ambas apps, revisar Maps/Core Location, desconectar LocalDevVPN y reiniciar el iPad si persiste una simulación. Desinstalar ambas apps elimina el MVP; el hotspot, Modo de desarrollador y LocalDevVPN se gestionan desde Ajustes. No se cambia ningún servicio del resto del workspace.
-
-Licencia MIT. Procedencia de la integración y dependencias en [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Licencia MIT; procedencia de la integración en [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

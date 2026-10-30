@@ -18,8 +18,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: es.pablo.gpsbridge
         PRODUCT_NAME: GPSBridge
-        MARKETING_VERSION: "0.1.0"
-        CURRENT_PROJECT_VERSION: "1"
+        MARKETING_VERSION: "0.2.0"
+        CURRENT_PROJECT_VERSION: "2"
         INFOPLIST_FILE: GPSBridge/Info.plist
         GENERATE_INFOPLIST_FILE: false
         CODE_SIGN_STYLE: Automatic

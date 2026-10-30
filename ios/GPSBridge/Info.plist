@@ -15,6 +15,7 @@
     <key>UISupportedInterfaceOrientations</key><array><string>UIInterfaceOrientationPortrait</string><string>UIInterfaceOrientationLandscapeLeft</string><string>UIInterfaceOrientationLandscapeRight</string></array>
     <key>UISupportedInterfaceOrientations~ipad</key><array><string>UIInterfaceOrientationPortrait</string><string>UIInterfaceOrientationPortraitUpsideDown</string><string>UIInterfaceOrientationLandscapeLeft</string><string>UIInterfaceOrientationLandscapeRight</string></array>
     <key>NSLocalNetworkUsageDescription</key><string>Recibir el GPS del Android por Wi-Fi y conectar con LocalDevVPN para inyectarlo en este iPad.</string>
-    <key>NSLocationWhenInUseUsageDescription</key><string>Comprobar qué ubicación recibe Core Location y si el sistema la marca como simulada.</string>
+    <key>NSLocationWhenInUseUsageDescription</key><string>Mantener el puente GPS activo durante la navegación aunque abras Waze u otra app. La sesión muestra el indicador de ubicación del sistema.</string>
+    <key>UIBackgroundModes</key><array><string>location</string></array>
     <key>ITSAppUsesNonExemptEncryption</key><false/>
 </dict></plist>

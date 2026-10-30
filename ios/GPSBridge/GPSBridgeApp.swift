@@ -9,7 +9,7 @@ struct GPSBridgeApp: App {
         WindowGroup {
             BridgeView(model: model)
                 .onChange(of: scenePhase) { _, phase in
-                    if phase == .background { model.stop(reason: "Detenido al pasar a segundo plano") }
+                    if phase == .active { model.resume() }
                 }
         }
     }
@@ -23,14 +23,14 @@ struct BridgeView: View {
         NavigationStack {
             Form {
                 Section {
-                    Text("Conecta el iPad al hotspot del Android y mantén ambas apps visibles. Usa ventanas simultáneas para comprobar Maps.")
+                    Text("Conecta al hotspot del Android e inicia aquí la sesión. Después puedes abrir Waze y Spotify: GPS Bridge mantiene la ubicación en segundo plano. No lo cierres desde el selector de apps.")
                     TextField("IP del Android", text: $model.host)
                         .keyboardType(.decimalPad).textInputAutocapitalization(.never).autocorrectionDisabled()
                         .accessibilityLabel("Dirección IP del Android")
                     SecureField("Código de seis cifras", text: $model.token)
                         .keyboardType(.numberPad).accessibilityLabel("Código de sesión del Android")
                 } header: { Text("Conexión local") }
-                .disabled(model.running)
+                .disabled(model.running || model.stopping)
 
                 Section {
                     Toggle("Inyectar en la ubicación del sistema", isOn: $model.inject)
@@ -46,7 +46,7 @@ struct BridgeView: View {
                 } header: { Text("Inyección DVT") } footer: {
                     Text("DVT transmite latitud y longitud. La precisión indicada pertenece al GPS Android. Recepción y retorno correcto de DVT no prueban por sí solos que Waze use la posición.")
                 }
-                .disabled(model.running)
+                .disabled(model.running || model.stopping)
 
                 Section {
                     Button(model.running ? "Detener y limpiar simulación" : "Conectar") {
@@ -54,14 +54,17 @@ struct BridgeView: View {
                     }
                     .font(.headline)
                     .frame(maxWidth: .infinity, minHeight: 44)
+                    .disabled(model.stopping)
+                    if model.stopping { Text("Limpiando simulación…") }
                 }
 
                 Section("Diagnóstico") {
                     LabeledContent("Red") { Text(model.transport) }
+                    Text(model.health).font(.footnote).monospacedDigit()
                     Text(model.gps).monospacedDigit().textSelection(.enabled)
                     LabeledContent("Inyección") { Text(model.injection) }
                     LabeledContent("Core Location observado") { Text(model.systemLocation).monospacedDigit() }
-                    Text("Al detener, perder GPS o pasar a segundo plano se intenta limpiar DVT. Comprueba la ubicación del sistema después de cada prueba.")
+                    Text("Segundo plano usa ubicación con indicador del sistema. Al perder GPS se limpia DVT y se reintenta; una pausa de GNSS puede interrumpir la navegación. Mantén LocalDevVPN conectado.")
                         .font(.footnote).foregroundStyle(.secondary)
                 }
             }
