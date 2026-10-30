@@ -1,16 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
   <title id="title">GPS Bridge</title>
-  <desc id="desc">El GPS de tu Android, en los mapas de tu iPad. Ilustración del flujo por Wi-Fi y Core Location. Proyecto experimental, versión 0.2.</desc>
+  <desc id="desc">Your Android's GPS, on your iPad's maps. Illustration of the Wi-Fi and Core Location data flow. Experimental project, version 0.2.</desc>
   <rect width="1200" height="630" fill="#102a30"/>
   <path d="M0 582h1200" stroke="#345057" stroke-width="1"/>
   <g font-family="Segoe UI,Arial,sans-serif">
     <text x="60" y="133" fill="#f4f5eb" font-size="78" font-weight="750" letter-spacing="-3">GPS Bridge</text>
-    <text x="64" y="230" fill="#f4f5eb" font-size="44" font-weight="600" letter-spacing="-1">El GPS de tu Android,</text>
-    <text x="64" y="288" fill="#f4f5eb" font-size="44" font-weight="600" letter-spacing="-1">en los mapas de tu iPad.</text>
-    <text x="64" y="365" fill="#b8cecb" font-size="25">Dos apps nativas. Una conexión Wi-Fi.</text>
-    <text x="64" y="434" fill="#3ddc84" font-size="22" font-weight="600">Código abierto</text>
+    <text x="64" y="230" fill="#f4f5eb" font-size="44" font-weight="600" letter-spacing="-1">Your Android's GPS,</text>
+    <text x="64" y="288" fill="#f4f5eb" font-size="44" font-weight="600" letter-spacing="-1">on your iPad's maps.</text>
+    <text x="64" y="365" fill="#b8cecb" font-size="25">Two native apps. One Wi-Fi connection.</text>
+    <text x="64" y="434" fill="#3ddc84" font-size="22" font-weight="600">Open source</text>
     <text x="242" y="434" fill="#72938f" font-size="22">/</text>
-    <text x="266" y="434" fill="#b8cecb" font-size="22">Sin jailbreak</text>
+    <text x="266" y="434" fill="#b8cecb" font-size="22">No jailbreak</text>
     <text x="64" y="488" fill="#b8cecb" font-size="20">Android 13+ · iPadOS 18+ · MIT</text>
 
     <text x="794" y="111" fill="#3ddc84" font-size="22" font-weight="600">Android</text>
@@ -20,7 +20,7 @@
     <circle cx="838" cy="252" r="31" fill="none" stroke="#3ddc84" stroke-width="2"/>
     <circle cx="838" cy="252" r="8" fill="#3ddc84"/>
     <path d="M838 208v17m0 54v17m-44-44h17m54 0h17" stroke="#3ddc84" stroke-width="2"/>
-    <text x="838" y="340" text-anchor="middle" fill="#d5e8d9" font-size="18">GPS real</text>
+    <text x="838" y="340" text-anchor="middle" fill="#d5e8d9" font-size="18">Real GPS</text>
     <path d="M903 252h52" stroke="#58d0df" stroke-width="3"/>
     <path d="m947 245 12 7-12 7" fill="none" stroke="#58d0df" stroke-width="3"/>
     <text x="929" y="226" text-anchor="middle" fill="#b8cecb" font-size="16">Wi-Fi</text>
@@ -32,7 +32,7 @@
     <path d="M1058 390v22" stroke="#58d0df" stroke-width="2"/>
     <text x="1058" y="441" text-anchor="middle" fill="#58d0df" font-size="21">Core Location</text>
     <text x="1058" y="476" text-anchor="middle" fill="#f4f5eb" font-size="25" font-weight="600">Maps · Waze</text>
-    <text x="960" y="526" text-anchor="middle" fill="#8eaaa8" font-size="15">Diagrama conceptual del flujo</text>
+    <text x="960" y="526" text-anchor="middle" fill="#8eaaa8" font-size="15">Conceptual data flow</text>
 
     <text x="64" y="612" fill="#f4f5eb" font-size="21">github.com/pablo-exe/GPS</text>
     <text x="1138" y="612" text-anchor="end" fill="#b8cecb" font-size="19">v0.2 · Experimental</text>

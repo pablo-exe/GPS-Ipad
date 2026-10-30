@@ -1,257 +1,257 @@
 <h1 align="center">GPS Bridge</h1>
 
-<p align="center"><strong>El GPS de tu Android, en los mapas de tu iPad.</strong></p>
+<p align="center"><strong>Your Android's GPS. Your iPad's maps.</strong></p>
 
 <p align="center">
-  <a href="https://github.com/pablo-exe/GPS/actions/workflows/build.yml"><img src="https://github.com/pablo-exe/GPS/actions/workflows/build.yml/badge.svg" alt="Estado de compilación y pruebas"></a>
-  <img src="https://img.shields.io/badge/versi%C3%B3n-0.2.0-168463?style=flat" alt="Versión 0.2.0">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/licencia-MIT-273e48?style=flat" alt="Licencia MIT"></a>
+  <a href="https://github.com/pablo-exe/GPS/actions/workflows/build.yml"><img src="https://github.com/pablo-exe/GPS/actions/workflows/build.yml/badge.svg" alt="Build and test status"></a>
+  <img src="https://img.shields.io/badge/version-0.2.0-168463?style=flat" alt="Version 0.2.0">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-273e48?style=flat" alt="MIT license"></a>
 </p>
 
 <p align="center">
-  <a href="#descargar">Descargar</a> ·
-  <a href="#primera-instalacion">Instalación</a> ·
-  <a href="#uso-diario">Uso diario</a> ·
-  <a href="#estado-del-proyecto">Qué está probado</a> ·
-  <a href="#problemas-frecuentes">Ayuda</a>
+  <a href="#download">Download</a> ·
+  <a href="#first-time-setup">Setup guide</a> ·
+  <a href="#everyday-use">Everyday use</a> ·
+  <a href="#project-status">What's tested</a> ·
+  <a href="#troubleshooting">Troubleshooting</a>
 </p>
 
-![Android envía su GNSS por un hotspot Wi-Fi a GPS Bridge; DVT entrega la posición a Core Location del iPad para Maps y Waze. Diagrama conceptual.](docs/assets/overview.svg)
+![Android sends GNSS over its Wi-Fi hotspot to GPS Bridge. DVT supplies the position to the iPad's Core Location service for Maps and Waze. Conceptual diagram.](docs/assets/overview.svg)
 
-**GPS Bridge comparte el GNSS real de un Android con la ubicación del sistema del iPad.** No necesitas una app de navegación modificada: Maps y Waze reciben las coordenadas mediante Core Location. El caso de uso es aprovechar el teléfono que ya tienes para dar posición a un iPad, especialmente un modelo Wi-Fi sin GNSS integrado.
+**GPS Bridge shares real Android GNSS coordinates with the iPad's system location service.** Maps and Waze receive the position through Core Location, using their normal, unmodified apps. The goal is to give an iPad a GPS source from the phone you already own—particularly useful for Wi-Fi-only models without built-in GNSS.
 
-Dos apps nativas pequeñas, una conexión local y **sin jailbreak**. El iPad requiere sideload, Modo de desarrollador, un archivo RPPairing y LocalDevVPN. El ordenador se utiliza para preparar e instalar; no actúa como puente durante la sesión.
+Two small native apps, a local connection, and **no jailbreak**. The iPad needs sideloading, Developer Mode, an RPPairing file, and LocalDevVPN. A computer is used for initial setup and installation; it is not part of the running GPS bridge.
 
 > [!IMPORTANT]
-> **Proyecto experimental, en validación.** El flujo completo hasta Maps/Waze se ha confirmado en un iPad real con la v0.1 en primer plano. La v0.2 añade segundo plano y recuperación automática; sus pruebas de software y Android emulado pasan. **La continuidad prolongada de la v0.2 en un iPad real, junto a Waze/Spotify, sigue pendiente de verificar.**
+> **Experimental project, still being validated.** The full Android → iPad → Maps/Waze flow was confirmed on a physical iPad with **v0.1 in the foreground**. v0.2 adds background sessions and automatic recovery; its software tests and Android emulator tests pass. **Extended v0.2 background use on a physical iPad alongside Waze/Spotify has not yet been verified.**
 
-## Descargar
+## Download
 
-### Versión 0.2.0
+### Version 0.2.0
 
-| App | Descargar | Requisitos | Instalación |
+| App | Download | Requirements | Installation |
 | --- | --- | --- | --- |
-| **GPS Sender · Android** | [Descargar APK de prueba](https://github.com/pablo-exe/GPS/actions/runs/41124247447/artifacts/13009922067) | Android **13+**, GNSS y hotspot | APK firmado para pruebas · unos **35 KB** |
-| **GPS Bridge · iPad/iPhone** | [Descargar IPA sin firmar](https://github.com/pablo-exe/GPS/actions/runs/41124247447/artifacts/13009402948) | iOS/iPadOS **18+**, dispositivo arm64 | Firma y sideload · aproximadamente **1 MB** |
+| **GPS Sender · Android** | [Download test APK](https://github.com/pablo-exe/GPS/actions/runs/41124247447/artifacts/13009922067) | Android **13+**, GNSS, and a Wi-Fi hotspot | Debug-signed APK · about **35 KB** |
+| **GPS Bridge · iPad/iPhone** | [Download unsigned IPA](https://github.com/pablo-exe/GPS/actions/runs/41124247447/artifacts/13009402948) | iOS/iPadOS **18+**, arm64 device | Sign and sideload · about **1 MB** |
 
-Estos enlaces descargan **ZIP de GitHub Actions**: inicia sesión en GitHub, descomprime y utiliza el `.apk` o `.ipa` de su interior. La IPA incluye checksum SHA-256 y avisos de terceros. No se instala abriéndola en Archivos: hay que firmarla.
+These links download **GitHub Actions ZIP archives**. Sign in to GitHub, extract the archive, and use the `.apk` or `.ipa` inside. The iOS artifact includes a SHA-256 checksum and third-party notices. Opening the IPA in Files does not install it: it must be signed first.
 
-**Los artefactos duran 14 días.** Si un enlace ha caducado, abre [Build MVP](https://github.com/pablo-exe/GPS/actions/workflows/build.yml), entra en una ejecución correcta y busca **Artifacts** al final de su resumen. Si no hay archivos vigentes, usa **Run workflow** cuando tengas permiso o [compila desde el código](#compilar).
+**Artifacts expire after 14 days.** If a link has expired, open [Build MVP](https://github.com/pablo-exe/GPS/actions/workflows/build.yml), select a successful run, and find **Artifacts** at the bottom of its summary. If no current artifacts are available, use **Run workflow** if you have permission, or [build from source](#build-from-source).
 
-**Actualiza siempre las dos apps juntas.** La v0.2 utiliza protocolo v2; no es compatible con el protocolo del MVP v0.1.
+**Update both apps together.** v0.2 uses protocol v2 and does not support the original v0.1 protocol.
 
-## Qué hace
+## What it does
 
-- **Android como fuente GNSS.** El teléfono captura la posición y la sirve por la red local del hotspot.
-- **Ubicación del sistema en el iPad.** El receptor utiliza el servicio DVT de Apple, a través de LocalDevVPN y `idevice`.
-- **Segundo plano preparado.** Android usa un servicio con notificación; el iPad mantiene una sesión de ubicación en segundo plano. La reproducción de audio no se usa como mecanismo de mantenimiento.
-- **Recuperación automática.** Red y DVT se reintentan de forma independiente. Las posiciones antiguas y las respuestas retrasadas se descartan.
-- **Sin backend del proyecto.** Las coordenadas circulan por tu red local; estas apps no guardan un historial de trayectos.
+- **Android supplies GNSS.** The phone captures its position and serves it over the hotspot's local network.
+- **The iPad receives system-level location.** The receiver uses Apple's DVT location simulation service through LocalDevVPN and `idevice`.
+- **Background sessions are implemented.** Android uses a location foreground service with a notification; iPadOS uses a background location session. The bridge does not use audio playback to stay alive.
+- **Connections recover automatically.** Android networking and DVT retry independently. Stale fixes and delayed replies are discarded.
+- **No project backend.** Coordinates travel over your local network. These apps do not store a trip history.
 
-<a id="primera-instalacion"></a>
+## First-time setup
 
-## Primera instalación
+The current app UI is in Spanish. This guide includes English translations alongside the exact Spanish button labels.
 
-### 1. Instala las dos apps
+### 1. Install both apps
 
-**En Android**
+**Android**
 
-1. Descarga y descomprime **GPS-Sender-Android**.
-2. Abre `app-debug.apk` y permite la instalación desde esa aplicación si Android lo solicita.
-3. Abre **GPS Sender**.
+1. Download and extract **GPS-Sender-Android**.
+2. Open `app-debug.apk`. Allow installation from that application if Android asks.
+3. Open **GPS Sender**.
 
-Si Android rechaza una actualización por firma incompatible, detén el GPS y desinstala la versión anterior antes de instalar. Cada runner de CI utiliza su propia clave debug; la app no guarda un recorrido que tengas que migrar.
+If Android rejects an update because its signature is different, stop GPS and uninstall the previous version before installing. Each CI runner uses its own debug signing key. The app does not store a route history that needs migrating.
 
-**En el iPad**
+**iPad**
 
-1. Descarga y descomprime **GPS-Bridge-iOS-unsigned** en tu ordenador.
-2. Firma e instala `GPS-Bridge-unsigned.ipa` con [Sideloadly](https://sideloadly.io/) —disponible para Windows y macOS—, [SideStore](https://sidestore.io/) o tu herramienta habitual de sideload.
-3. Sigue el asistente del instalador con tu cuenta Apple y abre **GPS Bridge** en el iPad.
-4. Mantén vigente la firma. El perfil, su caducidad y las renovaciones dependen del método de instalación que uses.
+1. Download and extract **GPS-Bridge-iOS-unsigned** on your computer.
+2. Sign and install `GPS-Bridge-unsigned.ipa` with [Sideloadly](https://sideloadly.io/)—available for Windows and macOS—[SideStore](https://sidestore.io/), or your usual sideloading tool.
+3. Follow the installer's instructions using your Apple account, then open **GPS Bridge** on the iPad.
+4. Keep the app's signature valid. Provisioning, expiration, and refresh requirements depend on the installation method you choose.
 
-**No necesitas un Mac para probar los artefactos:** GitHub Actions compila la IPA en macOS y puedes firmarla desde Windows. La compilación local de iOS sí necesita un Mac con Xcode.
+**You do not need a Mac to try the artifacts:** GitHub Actions compiles the IPA on macOS, and you can sign it from Windows. Building iOS locally does require a Mac with Xcode.
 
-### 2. Prepara el acceso de desarrollo del iPad
+### 2. Prepare the iPad's developer connection
 
-Esta preparación permite que GPS Bridge hable con los servicios de desarrollo **del propio iPad**.
+This setup lets GPS Bridge communicate with developer services **on the same iPad**.
 
-1. Activa **Ajustes → Privacidad y seguridad → Modo de desarrollador** y acepta el reinicio/confirmación si se solicita. Si no aparece, sigue la [guía oficial de Apple](https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device) y completa la instalación de desarrollo.
-2. Descarga [idevice_pair desde sus Releases oficiales](https://github.com/jkcoxson/idevice_pair/releases) en Windows o macOS.
-3. Conecta el iPad por USB, desbloquéalo y acepta **Confiar en este ordenador**.
-4. Genera un archivo **Remote pairing / RPPairing** para ese mismo iPad.
-5. Transfiérelo privadamente a **Archivos** del iPad. En GPS Bridge, activa **Inyectar en la ubicación del sistema**, pulsa **Importar RPPairing** y selecciónalo.
-6. Instala [LocalDevVPN desde el App Store](https://apps.apple.com/app/id6755608044), acepta su configuración y déjalo conectado.
-7. Revisa el endpoint del túnel en GPS Bridge. El valor inicial es **`10.7.0.1:49152`**; cámbialo si tu configuración de LocalDevVPN utiliza otro.
+1. Enable **Settings → Privacy & Security → Developer Mode**, including the restart/confirmation if requested. If the option is missing, follow [Apple's Developer Mode guide](https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device) and complete the development-app installation.
+2. Download [idevice_pair from its official Releases](https://github.com/jkcoxson/idevice_pair/releases) on Windows or macOS.
+3. Connect the iPad over USB, unlock it, and accept **Trust This Computer**.
+4. Generate a **Remote pairing / RPPairing** file for that exact iPad.
+5. Transfer it privately to **Files** on the iPad. In GPS Bridge, enable **Inject into system location** (`Inyectar en la ubicación del sistema`), tap **Import RPPairing** (`Importar RPPairing`), and select it.
+6. Install [LocalDevVPN from the App Store](https://apps.apple.com/app/id6755608044), approve its VPN configuration, and leave it connected.
+7. Check the tunnel endpoint in GPS Bridge. The default is **`10.7.0.1:49152`**. Change it if your LocalDevVPN configuration uses another address or port.
 
-> **RPPairing y Lockdown no son intercambiables.** Un archivo Lockdown/SideStore no sirve para esta conexión. Importa **Remote pairing / RPPairing**; no intentes convertirlo cambiando la extensión. Contiene material de emparejamiento: no lo subas al repositorio, a un issue ni a un log público.
+> **RPPairing and Lockdown files are not interchangeable.** A Lockdown/SideStore pairing file cannot authenticate this connection. Export **Remote pairing / RPPairing**; renaming a file does not convert it. Pairing files contain authentication material: never upload them to the repository, an issue, or a public log.
 
-Si el túnel conecta pero no está disponible `LocationSimulation`, puede faltar preparar/montar la imagen de desarrollador —DDI—. Usa Xcode o tu herramienta habitual; [StikDebug](https://github.com/StikDebug/StikDebug) es una referencia del ecosistema. **GPS Bridge no monta DDI ni hace el emparejamiento dentro de la app.** Tener RPPairing no garantiza por sí solo que el servicio DVT esté listo.
+If the tunnel connects but `LocationSimulation` is unavailable, the device's developer services or Developer Disk Image—DDI—may need preparing/mounting. Use Xcode or your usual developer tool; [StikDebug](https://github.com/StikDebug/StikDebug) is a reference in this ecosystem. **GPS Bridge does not mount DDI or perform pairing inside the app.** Having an RPPairing file alone does not prove DVT is ready.
 
-### 3. Conecta el hotspot y arranca Android
+### 3. Start the hotspot and Android sender
 
-1. Activa **Compartir Internet / Hotspot Wi-Fi** en Android.
-2. Conecta el iPad a esa red. Desactiva el apagado automático del hotspot si tu teléfono ofrece esa opción.
-3. En GPS Sender, pulsa **Iniciar GPS en segundo plano**.
-4. Permite ubicación **precisa mientras se usa la app** y notificaciones. Activa también la ubicación/GPS del teléfono.
-5. Pulsa **Permitir GPS continuo con pantalla apagada** y acepta la excepción de optimización de batería. Revisa cualquier restricción adicional del fabricante.
-6. Anota la **IP del hotspot** y el **código de sesión de seis cifras** que muestra la app.
+1. Enable **Wi-Fi hotspot / Internet sharing** on Android.
+2. Connect the iPad to that network. Disable automatic hotspot shutdown if your phone offers it.
+3. In GPS Sender, tap **Start background GPS** (`Iniciar GPS en segundo plano`).
+4. Allow **precise location while using the app** and notifications. Enable the phone's system location/GPS setting too.
+5. Tap **Allow continuous GPS with the screen off** (`Permitir GPS continuo con pantalla apagada`) and grant the battery-optimization exemption. Check any additional manufacturer-specific battery restrictions.
+6. Note the **hotspot IP address** and **six-digit session code** shown in the app.
 
-La notificación indica que la sesión está activa y ofrece **Detener GPS**. El servicio se inicia desde la app visible; no necesita el permiso de ubicación «todo el tiempo». Después puedes bloquear el teléfono. **Android debe permanecer encendido**, con hotspot y GPS activos.
+The ongoing notification identifies the active session and offers **Stop GPS** (`Detener GPS`). The service starts while the app is visible; it does not need Android's “Allow all the time” location permission. You can then lock the phone. **Android must remain powered on**, with its hotspot and GNSS active.
 
-**¿Hay varias direcciones IP?** Usa la de la interfaz del hotspot, no una de VPN. La dirección **Router / Puerta de enlace** de esa Wi-Fi en el iPad ayuda a identificar el teléfono. No existe una IP universal para todos los Android.
+**More than one IP address?** Use the hotspot interface, not a VPN address. The **Router / Gateway** address in the iPad's Wi-Fi details can help identify the phone. There is no universal hotspot IP for all Android devices.
 
-### 4. Comprueba primero la recepción
+### 4. Test reception first
 
-1. En GPS Bridge, introduce la **IP Android** y el **código**.
-2. Permite **red local** y **ubicación mientras se usa la app**. La ubicación se utiliza también para mantener la sesión en segundo plano.
-3. Deja la inyección apagada y pulsa **Conectar**. Si se abre el permiso de ubicación en ese intento, concédelo y vuelve a pulsar **Conectar**.
-4. Comprueba que aparecen coordenadas recientes y que aumenta el número de posición.
-5. Repite con **LocalDevVPN conectado**: el acceso LAN al Android debe seguir funcionando.
+1. In GPS Bridge, enter the **Android IP address** and **session code**.
+2. Allow **Local Network** and **location while using the app**. Location access also supports the receiver's background session.
+3. Leave injection disabled and tap **Connect** (`Conectar`). If this opens the location permission prompt, grant access and tap Connect again.
+4. Check that recent coordinates appear and the fix sequence number increases.
+5. Repeat with **LocalDevVPN connected**: the iPad must still be able to reach Android over the LAN.
 
-Esta fase aísla la red: puedes comprobar la recepción sin RPPairing ni sesión DVT. Si no llegan coordenadas aquí, resuelve primero IP, permisos, hotspot o señal GNSS. Para la primera captura GNSS, prueba en exterior o cerca de una ventana.
+This isolates networking from injection. Reception can be tested without RPPairing or a DVT session. If no coordinates arrive here, check IP, permissions, hotspot, and GNSS reception first. For the first GNSS fix, try outdoors or near a window.
 
-### 5. Activa la ubicación del sistema
+### 5. Enable system location injection
 
-1. Pulsa **Detener y limpiar simulación** para cerrar la prueba de recepción.
-2. Activa **Inyectar en la ubicación del sistema**. Revisa RPPairing, IP/puerto del túnel y LocalDevVPN.
-3. Pulsa **Conectar** y comprueba estos tres niveles:
+1. Tap **Stop and clear simulation** (`Detener y limpiar simulación`) to end the reception-only test.
+2. Enable **Inject into system location** (`Inyectar en la ubicación del sistema`). Check RPPairing, the tunnel IP/port, and LocalDevVPN.
+3. Tap **Connect** and check these three diagnostic levels:
 
-| Diagnóstico | Qué demuestra |
+| Diagnostic | What it proves |
 | --- | --- |
-| **Red: recibiendo GPS reciente** | El iPad recibe posiciones válidas del Android. |
-| **DVT aceptó posición** | El servicio de desarrollo ha aceptado el comando de coordenadas. |
-| **Core Location observado: Simulada por software** | El sistema entrega una ubicación marcada como simulada. Comprueba también que sus coordenadas coinciden con Android. |
+| **Network: receiving recent GPS** (`Red: recibiendo GPS reciente`) | Valid Android fixes are reaching the iPad. |
+| **DVT accepted position** (`DVT aceptó posición`) | The developer service accepted the coordinate command. |
+| **Observed Core Location: software-simulated** (`Core Location observado: Simulada por software`) | The system is delivering a location marked as simulated. Also check that its coordinates match Android's. |
 
-4. Abre **Maps o Waze** y comprueba que el punto sigue tu movimiento. El resultado visual en la app de navegación completa la comprobación: recibir GPS y obtener un retorno correcto de DVT no bastan por separado.
+4. Open **Maps or Waze** and check that the position follows your movement. Observing the navigation app completes the test: receiving fixes and getting a successful DVT return are separate checks.
 
-## Uso diario
+## Everyday use
 
-Después de la preparación inicial:
+Once setup is complete:
 
-1. **Android:** activa hotspot, inicia GPS Sender y copia su código de sesión.
-2. **iPad:** conecta a ese hotspot, activa LocalDevVPN y conecta GPS Bridge con la inyección activada.
-3. Comprueba posición reciente y Core Location; después **abre Waze normalmente**. GPS Bridge puede quedar minimizado. Puedes usar Spotify sin que el puente reclame una sesión de audio.
-4. **Bloquea Android o apaga su pantalla.** El teléfono debe seguir encendido y compartiendo la red.
-5. Al terminar, pulsa **Detener y limpiar simulación** en el iPad y **Detener GPS** en Android o en su notificación. Revisa Maps y el resultado de limpieza.
+1. **Android:** enable the hotspot, start GPS Sender, and copy its session code.
+2. **iPad:** join the hotspot, connect LocalDevVPN, and connect GPS Bridge with injection enabled.
+3. Check recent fixes and Core Location, then **open Waze normally**. GPS Bridge can remain minimized. You can use Spotify without the bridge claiming an audio session.
+4. **Lock Android or turn its screen off.** Keep the phone powered on and its hotspot running.
+5. When finished, tap **Stop and clear simulation** on iPad and **Stop GPS** in Android or its notification. Check Maps and the cleanup result.
 
-No hace falta mantener una ventana pequeña del receptor abierta en la v0.2. **Minimizar el iPad no es cerrarlo a la fuerza:** no deslices GPS Bridge fuera del selector de apps. En segundo plano, iPadOS puede mostrar su indicador de ubicación.
+v0.2 does not require keeping a small receiver window visible. **Minimizing is different from force-quitting:** do not swipe GPS Bridge away in the iPad's app switcher. iPadOS may show its background location indicator.
 
-Si el sistema mata un proceso, abre e inicia la app afectada de nuevo; no se promete recuperación después de una detención forzada. La app recuerda IP/túnel y la elección de inyección. El código Android permanece durante la sesión del servicio; **detenerlo y volver a iniciarlo genera otro código**. Si cambia la IP del hotspot, corrígela en el receptor.
+If the OS kills a process, reopen and start the affected app. Recovery after force-stop is not promised. The receiver remembers the IP/tunnel settings and injection choice. The Android code stays valid for the service session; **stopping and starting the service creates a new code**. If the hotspot IP changes, update the receiver's address.
 
-## Capturas
+## Screenshots
 
 <p align="center">
-  <img src="docs/assets/android-session.png" width="260" alt="Captura real del emulador Android: GPS Sender iniciado, IP local, código efímero y batería sin optimización de Doze. Todavía espera al cliente.">
-  <img src="docs/assets/android-stopped.png" width="260" alt="Captura real del emulador Android tras detener la sesión: estado Detenido y sin posición activa.">
+  <img src="docs/assets/android-session.png" width="260" alt="Real Android emulator screenshot: GPS Sender running, local IP, temporary session code, and battery optimization exemption. It is still waiting for the test client.">
+  <img src="docs/assets/android-stopped.png" width="260" alt="Real Android emulator screenshot after stopping the session: stopped status and no active position.">
 </p>
 
-<p align="center"><em>Primera captura: servicio iniciado. Segunda captura: sesión detenida.</em></p>
+<p align="center"><em>First: Android service started. Second: session stopped. The current app UI is in Spanish.</em></p>
 
-**Capturas reales de un emulador API 35**, procedentes del ensayo automático de la v0.2. Los datos son sintéticos y el código mostrado pertenecía a una sesión de prueba ya terminada. No son fotos del iPad ni prueba visual de Waze en hardware. [Procedencia de las imágenes](docs/assets/README.md).
+**Real API 35 emulator captures** from the v0.2 automated test. Data is synthetic, and the displayed code belonged to a test session that has ended. These are not iPad photos or visual evidence of Waze running on physical hardware. [Image provenance](docs/assets/README.md).
 
-## Estado del proyecto
+## Project status
 
-Última comprobación documentada: **30 de octubre de 2026**.
+Last documented verification: **October 30, 2026**.
 
-| Escenario | Resultado | Alcance de la evidencia |
+| Scenario | Result | Evidence and scope |
 | --- | --- | --- |
-| Android → iPad → DVT → Core Location → Maps/Waze | **Confirmado en hardware** | Prueba comunicada con la **v0.1 en primer plano**: movimiento/dirección y parada al cortar la conexión. |
-| APK e IPA v0.2, protocolo y recuperación DVT | **Pruebas automáticas superadas** | [Ejecución verificada](https://github.com/pablo-exe/GPS/actions/runs/41124247447), commit `2f61fad`. La recuperación DVT se ensaya con una sesión falsa, no con un iPad en CI. |
-| Android v0.2 con pantalla apagada y Doze | **60/60 muestras recientes** | Emulador API 35, con excepción de batería. También se verifica parada del socket/servicio y liberación del bloqueo de CPU. |
-| iPad v0.2 en segundo plano con Waze/Spotify | **Implementado; pendiente de prueba prolongada en hardware** | No se anuncia como continuidad garantizada. |
-| Sesiones largas, bloqueo del iPad y distintas versiones de iPadOS | **Pendiente** | Hay que comprobar cada combinación de dispositivo, sistema, VPN y firma. |
+| Android → iPad → DVT → Core Location → Maps/Waze | **Confirmed on hardware** | Reported test with **v0.1 in the foreground**: movement/direction and stopping after connection loss. |
+| v0.2 APK/IPA, protocol, and DVT recovery | **Automated tests passed** | [Verified workflow run](https://github.com/pablo-exe/GPS/actions/runs/41124247447), commit `2f61fad`. DVT recovery uses a fake session in tests, not a physical iPad in CI. |
+| v0.2 Android with screen off and forced Doze | **60/60 fresh samples** | API 35 emulator with battery exemption; also checks service/socket stop and CPU wake-lock release. |
+| v0.2 iPad background use alongside Waze/Spotify | **Implemented; extended hardware test pending** | Continuous operation is not yet a verified claim. |
+| Long sessions, iPad locking, and different iPadOS versions | **Pending** | Each device, OS, VPN, and signing combination needs checking. |
 
-El mínimo **iPadOS 18+** es un objetivo de compilación, no una certificación de todas sus versiones: el acceso a los servicios de desarrollo puede cambiar. La IPA también incluye la familia iPhone, aunque el caso de uso que se está validando es iPad.
+The **iPadOS 18+** minimum is a build target, not certification of every OS release: access to developer services can change. The IPA also targets the iPhone device family, but iPad is the use case currently being validated.
 
-## Cuando se corta la conexión
+## Connection loss and recovery
 
-| Situación | Comportamiento de la v0.2 |
+| Situation | v0.2 behavior |
 | --- | --- |
-| Corte TCP o pérdida de Wi-Fi | Invalida la posición, intenta limpiar DVT y reconecta con esperas de **1, 2, 4 y hasta 8 s**. Requiere que IP y código sigan siendo correctos. |
-| GNSS sin señal, antiguo o impreciso | Deja de inyectar el último punto; espera una posición válida y recupera DVT automáticamente. |
-| Fallo del túnel DVT | Recupera la sesión por separado de la red Android. Una sesión nueva limpia cualquier simulación anterior antes de aceptar posiciones. |
-| Respuesta TCP retrasada | La descarta: no reproduce una cola de posiciones antiguas. |
-| Limpieza DVT fallida | Muestra **estado de ubicación desconocido** y, mientras la sesión sigue abierta, reintenta la limpieza incluso sin GPS. |
-| Código incorrecto | Detiene los intentos para que puedas corregirlo. |
-| Proceso cerrado a la fuerza, reinicio o hotspot con otra IP | Requiere intervención: vuelve a iniciar la app, revisa IP y copia el código nuevo cuando corresponda. |
+| TCP or Wi-Fi connection lost | Invalidates the fix, attempts DVT cleanup, and reconnects with **1, 2, 4, then up to 8 s** between failures. IP and code must still be correct. |
+| GNSS missing, stale, or inaccurate | Stops injecting the last coordinate, waits for valid GNSS, and recovers DVT automatically. |
+| DVT tunnel failure | Recovers separately from Android networking. Each new DVT session clears previous simulation before accepting fixes. |
+| Delayed TCP response | Discards it rather than replaying queued coordinates. |
+| DVT cleanup fails | Reports **unknown location state** and retries cleanup even without GNSS while the bridge session remains open. |
+| Incorrect code | Stops attempts so you can correct the code. |
+| Force-quit, reboot, or changed hotspot IP | Requires intervention: restart the affected app, check IP, and copy the new code when needed. |
 
-**Límite de frescura:** menos de **2,5 s** de edad total estimada, sumando edad de captura en Android, RTT completo como cota conservadora del transporte y tiempo en el receptor. Un duplicado no rejuvenece el GPS. Solo se admiten posiciones Android no simuladas y con precisión horizontal **mayor de 0 y no superior a 100 m**.
+**Freshness limit:** estimated total age below **2.5 s**, including Android capture age, the entire request RTT as a conservative transport bound, and time spent in the receiver. Duplicates do not refresh the fix. Android fixes must not be marked as mock locations, and horizontal accuracy must be **greater than 0 and no worse than 100 m**.
 
-Se solicitan posiciones hasta **2 Hz**; el hardware decide la frecuencia GNSS real. Una respuesta de más de **1,5 s** se descarta y una petición sin respuesta vence en **2 s**. Las llamadas DVT tienen timeout de **3 s por operación** y se ejecutan fuera del hilo de interfaz.
+The iPad requests up to **2 fixes per second**; actual GNSS frequency depends on the phone. Replies taking over **1.5 s** are discarded, and unanswered requests time out after **2 s**. DVT calls use a **3 s timeout per operation** and run off the UI thread.
 
-**Caducar una posición no garantiza que iPadOS la haya limpiado en ese mismo plazo.** Una llamada bloqueante, un proceso suspendido/cerrado o un túnel roto pueden retrasar o impedir la limpieza. Un punto que permanece en Maps no demuestra que el puente lo siga reinyectando. Si no puedes confirmar el resultado, sigue la recuperación indicada abajo.
+**Expiring a fix does not guarantee iPadOS has cleared it within the same deadline.** A blocking call, suspended/terminated process, or broken tunnel can delay or prevent cleanup. A point remaining in Maps does not prove the bridge is still injecting it. Use the recovery steps below if cleanup cannot be confirmed.
 
-## Problemas frecuentes
+## Troubleshooting
 
-| Problema | Qué revisar |
+| Problem | Check |
 | --- | --- |
-| No aparece una IP en Android | Activa el hotspot e inicia GPS Sender. Usa la interfaz del hotspot, no VPN. |
-| El iPad no recibe datos | Misma Wi-Fi, IP Android correcta, código actual y permiso de **red local**. Prueba primero solo recepción y después con LocalDevVPN activo. |
-| «Código incorrecto» | Detén la sesión del iPad y copia el código que muestra el servicio Android actual. Reiniciar ese servicio cambia el código. |
-| Android indica «Buscando GPS» | Ubicación/GPS activados, permiso **preciso**, mejor recepción GNSS y batería sin restricciones. La app no acepta datos viejos o de mala precisión. |
-| RPPairing no válido | Exporta **Remote pairing** para ese mismo iPad con `idevice_pair`. No uses Lockdown ni cambies una extensión para intentar convertirlo. |
-| DVT no conecta | LocalDevVPN activo, IP/puerto correctos, Modo de desarrollador y RPPairing del dispositivo. |
-| No está disponible `LocationSimulation` | Revisa la preparación de servicios/DDI con Xcode o tu herramienta de desarrollo. El puente no monta la imagen. |
-| Se detiene al minimizar o bloquear | Comprueba v0.2 en ambas apps, permisos de ubicación, notificación/servicio Android, excepción de batería y que no has forzado un cierre. La continuidad real del iPad sigue en validación. |
-| Maps no cambia aunque DVT acepte | Revisa **Core Location observado**, coordenadas y marca de simulación. Prueba Maps y Waze por separado; las apps pueden rechazar ubicaciones simuladas. |
-| IPA no instala o deja de abrir | Firma/perfil vigentes y método de sideload correcto. Reinstala/renueva siguiendo tu instalador. No es una descarga de App Store. |
-| APK rechaza actualizar | La firma debug puede haber cambiado. Detén y desinstala la versión anterior antes de instalar. |
+| No IP shown on Android | Enable the hotspot and start GPS Sender. Use the hotspot interface, not a VPN address. |
+| No data reaches iPad | Same Wi-Fi, correct Android IP, current code, and **Local Network** permission. Try reception-only first, then repeat with LocalDevVPN enabled. |
+| “Incorrect code” | Stop the iPad session and copy the code from the current Android service. Restarting that service changes its code. |
+| Android keeps searching for GPS | System location/GPS enabled, **precise** permission, good GNSS reception, and unrestricted battery use. Old or inaccurate fixes are withheld. |
+| Invalid RPPairing | Export **Remote pairing** for that exact iPad with `idevice_pair`. A Lockdown file or renamed extension will not work. |
+| DVT will not connect | LocalDevVPN active, correct tunnel IP/port, Developer Mode, and the device's own RPPairing file. |
+| `LocationSimulation` unavailable | Prepare developer services/DDI with Xcode or your developer tool. The bridge does not mount the image. |
+| Stops after minimizing or locking | Check v0.2 on both sides, location permissions, Android's service/notification, battery exemption, and no force-quit. Physical iPad background continuity is still being validated. |
+| DVT accepts but Maps does not move | Check **Observed Core Location**, coordinates, and the simulated flag. Try Maps and Waze separately; apps may reject software-simulated locations. |
+| IPA will not install or stops opening | Valid signature/profile and a working sideloading method. Re-sign/refresh with your installer. This is not an App Store install. |
+| APK update rejected | The debug signing key may have changed. Stop and uninstall the previous app before installing. |
 
-### Recuperar una ubicación de estado desconocido
+### Recover an unknown location state
 
-1. Recupera **LocalDevVPN** y una posición Android reciente.
-2. Conecta GPS Bridge y después pulsa **Detener y limpiar simulación**.
-3. Comprueba el resultado DVT y la ubicación en Maps. Una limpieza aceptada no garantiza una nueva posición física inmediata en un iPad Wi-Fi sin GNSS.
-4. Si no se confirma la limpieza o sigue apareciendo una posición simulada antigua, **reinicia el iPad y comprueba de nuevo**.
+1. Restore **LocalDevVPN** and a recent Android fix.
+2. Connect GPS Bridge, then tap **Stop and clear simulation**.
+3. Check the DVT result and Maps. Accepted cleanup does not guarantee an immediate new physical fix on a Wi-Fi iPad without GNSS.
+4. If cleanup cannot be confirmed or an old simulated position persists, **restart the iPad and check again**.
 
-## Privacidad y límites
+## Privacy and limitations
 
-- Las coordenadas se envían por **TCP local**. No hay backend del proyecto ni historial de trayectos en las apps.
-- El código de seis cifras limita conexiones casuales; **TCP no va cifrado**. Utiliza un hotspot protegido y no expongas el puerto **8765** a Internet.
-- RPPairing permanece en el iPad: copia privada, permisos `0600`, excluida de backup y accesible después del primer desbloqueo para una sesión con pantalla bloqueada.
-- DVT recibe **latitud y longitud**. La precisión Android se utiliza para filtrar/diagnosticar, no se transmite como precisión del sistema. No se envían directamente velocidad, rumbo ni altitud por ese método.
-- El sistema marca la ubicación como **simulada por software**. Cada app puede interpretarla o rechazarla.
-- No se extrapola una posición dentro de un túnel ni se promete continuidad con procesos terminados. Tampoco es un receptor GNSS MFi ni una distribución por App Store.
+- Coordinates travel over **local TCP**. These apps have no project backend and do not store a trip history.
+- The six-digit code limits casual connections; **TCP is not encrypted**. Use a protected hotspot and do not expose port **8765** to the Internet.
+- RPPairing stays on the iPad: private copy, `0600` permissions, excluded from backup, and readable after first unlock to support a locked session.
+- DVT receives **latitude and longitude**. Android accuracy is used for filtering/diagnostics, not forwarded as system accuracy. This method does not directly transmit speed, heading, or altitude.
+- The system marks the location as **simulated by software**. Individual apps can interpret or reject it.
+- The bridge does not extrapolate through tunnels or promise continuity after process termination. It is not an MFi GNSS receiver or an App Store distribution.
 
 <details>
-<summary><strong>Prueba recomendada en tus dispositivos</strong></summary>
+<summary><strong>Suggested hardware acceptance test</strong></summary>
 
-Para validar la v0.2, anota modelo y versión exacta de Android, iPadOS, LocalDevVPN, Waze y método de firma. Comprueba:
+Record exact Android device/OS, iPad/iPadOS, LocalDevVPN, Waze, and signing method. For v0.2, check:
 
-- [ ] Recepción y Core Location correctos antes de cambiar de app.
-- [ ] GPS Bridge minimizado y Waze/Spotify activos **20–30 minutos**, con movimiento y sin que el puente reclame audio.
-- [ ] Android bloqueado durante la sesión, con servicio/notificación activos.
-- [ ] GNSS desactivado/reactivado: caducidad, limpieza y recuperación.
-- [ ] Wi-Fi/hotspot cortado 10–20 s y restaurado: recuperación con la misma IP/código, o corrección explícita si cambian.
-- [ ] LocalDevVPN desconectado/reconectado: fallo visible y recuperación DVT.
-- [ ] Parada desde Android/notificación y desde el iPad; revisión de Maps después de cada prueba.
-- [ ] Bloqueo del iPad, restricciones de batería y cierre forzado comprobados por separado.
+- [ ] Reception and Core Location are correct before switching apps.
+- [ ] GPS Bridge minimized with Waze/Spotify active for **20–30 minutes**, with movement and no audio-session takeover by the bridge.
+- [ ] Android locked during the session, with its service/notification active.
+- [ ] GNSS disabled/re-enabled: expiry, cleanup, and recovery.
+- [ ] Wi-Fi/hotspot interrupted for 10–20 s: recovery with the same IP/code, or explicit correction if they changed.
+- [ ] LocalDevVPN disconnected/reconnected: visible failure and DVT recovery.
+- [ ] Stop from Android/notification and iPad; inspect Maps after each test.
+- [ ] iPad locking, battery restrictions, and force-quitting checked separately.
 
 </details>
 
-## Para desarrolladores
+## For developers
 
-### Compilar
+### Build from source
 
 ```sh
 git clone https://github.com/pablo-exe/GPS.git
 cd GPS
 ```
 
-**Android · Windows, Linux o macOS**
+**Android · Windows, Linux, or macOS**
 
-Instala **JDK 17**, **Android SDK 35** y **Gradle 8.11.1**. Configura el SDK para Gradle (`ANDROID_HOME` o `android/local.properties`). No necesitas Android Studio si ya dispones de esos componentes.
+Install **JDK 17**, **Android SDK 35**, and **Gradle 8.11.1**. Configure the SDK for Gradle using `ANDROID_HOME` or `android/local.properties`. Android Studio is optional if you already have those tools.
 
 ```sh
 cd android
 gradle :app:assembleDebug :app:lintDebug
 ```
 
-Salida: `android/app/build/outputs/apk/debug/app-debug.apk`.
+Output: `android/app/build/outputs/apk/debug/app-debug.apk`.
 
-**iOS · macOS con Xcode**
+**iOS · macOS with Xcode**
 
-Desde la raíz del repositorio:
+From the repository root:
 
 ```sh
 python3 scripts/prepare_ios_vendor.py
@@ -261,37 +261,37 @@ xcodegen generate
 open GPSBridge.xcodeproj
 ```
 
-Selecciona tu equipo de firma en Xcode y ejecuta en un dispositivo. `prepare_ios_vendor.py` descarga biblioteca, cabecera y módulo desde un **commit fijo de Locus** y verifica SHA-256. La FFI es para **dispositivo arm64**, no para simulador; evita recompilar Rust y guardar sus 95 MB en Git.
+Select your signing team in Xcode and run on a device. `prepare_ios_vendor.py` downloads the library, header, and module from a **pinned Locus commit**, verifying SHA-256. The FFI targets **arm64 devices**, not the simulator; no Rust compilation or 95 MB library blob in Git is needed.
 
-Para generar una IPA sin firma, el comando de compilación y el empaquetado están en [el workflow de Actions](.github/workflows/build.yml). La IPA necesita firma antes de instalarse.
+The unsigned build command and IPA packaging steps are in [the Actions workflow](.github/workflows/build.yml). The IPA must be signed before installation.
 
-### Arquitectura y pruebas
+### Architecture and tests
 
-| Pieza | Responsabilidad |
+| Component | Responsibility |
 | --- | --- |
-| [`GpsService.java`](android/app/src/main/java/es/pablo/gpsbridge/GpsService.java) | GNSS, servicio Android de ubicación, notificación y bloqueo parcial de CPU durante la sesión. |
-| [`GpsServer.java`](android/app/src/main/java/es/pablo/gpsbridge/GpsServer.java) | TCP local v2, autenticación y última posición; sustitución de sockets antiguos. |
-| [`ReceiverModel.swift`](ios/GPSBridge/ReceiverModel.swift) | Sesión de ubicación en segundo plano, red, reconexiones, permisos y diagnóstico. |
-| [`Protocol.swift`](ios/GPSBridge/Protocol.swift) | Framing NDJSON, correlación de peticiones, edad, RTT y reloj que incluye suspensión. |
-| [`InjectionWorker.swift`](ios/GPSBridge/InjectionWorker.swift) | Inyección serial, frescura, limpieza y recuperación DVT, con pruebas aisladas. |
-| [`LocationEngine.swift`](ios/GPSBridge/LocationEngine.swift) | Adaptador FFI: RPPairing → túnel → RSD → `LocationSimulation`. |
+| [`GpsService.java`](android/app/src/main/java/es/pablo/gpsbridge/GpsService.java) | GNSS, Android location foreground service, notification, and a partial CPU wake lock for the active session. |
+| [`GpsServer.java`](android/app/src/main/java/es/pablo/gpsbridge/GpsServer.java) | Local TCP v2, authentication, latest fix, and replacement of old sockets. |
+| [`ReceiverModel.swift`](ios/GPSBridge/ReceiverModel.swift) | Background location session, networking/reconnection, permissions, and diagnostics. |
+| [`Protocol.swift`](ios/GPSBridge/Protocol.swift) | NDJSON framing, request matching, fix age, RTT, and a clock that includes suspension. |
+| [`InjectionWorker.swift`](ios/GPSBridge/InjectionWorker.swift) | Serial injection, freshness, cleanup, and DVT recovery with isolated tests. |
+| [`LocationEngine.swift`](ios/GPSBridge/LocationEngine.swift) | FFI adapter: RPPairing → tunnel → RSD → `LocationSimulation`. |
 
-El protocolo v2 responde a **una petición pendiente**, identificada por `request_id`, con la última posición disponible. No envía un historial en cola. La versión anterior se ha retirado.
+Protocol v2 answers **one outstanding request**, identified by `request_id`, with the latest available fix. It does not stream a queued route history. The previous protocol has been removed.
 
-CI comprueba el servidor con TCP real y datos sintéticos, el parser y el worker Swift con DVT falso, Android Lint y ambas compilaciones. El job `android-runtime` instala el APK en un emulador aislado API 35, inicia desde el botón, fuerza Doze con pantalla apagada y comprueba las 60 muestras, parada y liberación del bloqueo de CPU. La evidencia está en **Android-runtime-evidence** de la [ejecución verificada](https://github.com/pablo-exe/GPS/actions/runs/41124247447).
+CI tests the server over real TCP with synthetic GNSS, the Swift parser/worker with a fake DVT session, Android Lint, and both builds. `android-runtime` installs the APK on an isolated API 35 emulator, starts it through the app button, forces Doze with the screen off, and checks 60 samples, shutdown, and CPU wake-lock release. Evidence is available in **Android-runtime-evidence** from the [verified run](https://github.com/pablo-exe/GPS/actions/runs/41124247447).
 
-Las pruebas incluyen duplicados, respuestas retrasadas, caducidad durante handshake o llamada DVT lenta, desconexión, reintentos y limpieza fallida. **CI no ejecuta los servicios DVT de un iPad físico ni comprueba la política de suspensión real de iPadOS.**
+Tests cover duplicates, delayed replies, expiry during a handshake or slow DVT set, disconnects, retry behavior, and failed cleanup. **CI does not run a physical iPad's DVT services or verify actual iPadOS suspension behavior.**
 
-## Comunidad
+## Community
 
-¿Lo has probado? [Abre un issue](https://github.com/pablo-exe/GPS/issues/new) con modelos, versiones, método de instalación, pasos para reproducir y lo que muestran Red/DVT/Core Location. Indica si estabas en primer plano, segundo plano o con pantalla bloqueada. No adjuntes RPPairing, credenciales, códigos activos ni ubicaciones personales.
+Tried it? [Open an issue](https://github.com/pablo-exe/GPS/issues/new) with device models, exact versions, installation method, reproduction steps, and Network/DVT/Core Location diagnostics. Say whether the apps were foregrounded, backgrounded, or locked. Do not attach RPPairing, credentials, active codes, or personal locations.
 
-Para compartir el proyecto tienes una [portada PNG y un borrador de post para Twitter](docs/COMMUNITY.md). La portada es un diagrama conceptual; las capturas Android son reales de emulador. Las pruebas nuevas ayudan a ampliar la matriz de compatibilidad sin confundir lo implementado con lo verificado.
+Want to share the project? There is a [PNG cover and draft Twitter post](docs/COMMUNITY.md). The cover is a conceptual diagram; Android screenshots are real emulator captures. New reports help expand the compatibility matrix while keeping implemented features separate from verified behavior.
 
-## Créditos y licencia
+## Credits and license
 
-- [Locus](https://github.com/ChrisMack32/Locus), por la secuencia de conexión DVT adaptada y la FFI distribuida por su proyecto.
-- [idevice](https://github.com/jkcoxson/idevice) e [idevice_pair](https://github.com/jkcoxson/idevice_pair), por el acceso a servicios Apple y la creación de RPPairing.
-- [LocalDevVPN](https://apps.apple.com/app/id6755608044), por el camino de red hacia el propio dispositivo.
+- [Locus](https://github.com/ChrisMack32/Locus), for the adapted DVT connection sequence and the FFI distributed by its project.
+- [idevice](https://github.com/jkcoxson/idevice) and [idevice_pair](https://github.com/jkcoxson/idevice_pair), for Apple device services and RPPairing creation.
+- [LocalDevVPN](https://apps.apple.com/app/id6755608044), for the network path to the device itself.
 
-**[MIT](LICENSE)**. Consulta la procedencia y los avisos completos en [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Proyecto independiente, sin afiliación con Apple, Google, Waze, Spotify ni las herramientas citadas.
+**[MIT](LICENSE)**. Full attribution and provenance are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Independent project, not affiliated with Apple, Google, Waze, Spotify, or the tools above.

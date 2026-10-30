@@ -1,13 +1,13 @@
-# Imágenes y procedencia
+# Images and provenance
 
-| Archivo | Origen y alcance |
+| File | Source and scope |
 | --- | --- |
-| `overview.svg` | Diagrama vectorial original del flujo Android → hotspot → iPad → Core Location. No representa una captura de la app iPad. |
-| `social-preview.svg` | Portada vectorial original de 1200 × 630 para compartir el proyecto. Los dispositivos/mapa son un esquema conceptual, no fotos ni evidencia de uso. |
-| `social-preview.png` | Rasterización de `social-preview.svg` a 1200 × 630 con Sharp 0.35.5. Lista para adjuntar a un post. |
-| `android-session.png` | Captura original, sin modificar, del emulador API 35: servicio iniciado, antes de conectar el cliente de prueba. |
-| `android-stopped.png` | Captura original, sin modificar, del mismo ensayo tras detener el servicio. |
+| `overview.svg` | Original vector diagram of Android → hotspot → iPad → Core Location. It is not an iPad app screenshot. |
+| `social-preview.svg` | Original 1200 × 630 vector cover for sharing the project. Device/map shapes are a conceptual diagram, not photos or test evidence. |
+| `social-preview.png` | Rasterized from `social-preview.svg` at 1200 × 630 using Sharp 0.35.5. Ready to attach to a post. |
+| `android-session.png` | Original, unmodified API 35 emulator capture: Android service started before the test client connects. |
+| `android-stopped.png` | Original, unmodified capture from the same test after stopping the service. |
 
-Las capturas proceden del [ensayo CI del 30/10/2026](https://github.com/pablo-exe/GPS/actions/runs/41124247447), commit `2f61fad716d7f8a31103fb07b010c26fe49b8906`, artefacto `Android-runtime-evidence`. Se usan datos sintéticos y un código efímero de una sesión de emulador ya terminada. No contienen una ubicación personal ni un RPPairing. No se dispone de fotos ni capturas reales del iPad; no se han fabricado.
+Screenshots come from the [October 30, 2026 CI run](https://github.com/pablo-exe/GPS/actions/runs/41124247447), commit `2f61fad716d7f8a31103fb07b010c26fe49b8906`, artifact `Android-runtime-evidence`. They use synthetic data and a temporary code from an emulator session that has ended. They contain no personal location or RPPairing. The current app UI is in Spanish. No real iPad photos/screenshots were available; none have been fabricated.
 
-Los SVG y las capturas del proyecto se distribuyen bajo la licencia MIT del repositorio. Los SVG usan tipografía del sistema; no se redistribuyen archivos de fuentes.
+The project's SVGs and screenshots are distributed under the repository's MIT license. SVGs use system typography; no font files are redistributed.
