@@ -170,13 +170,15 @@ final class ReceiverModel: NSObject, ObservableObject, CLLocationManagerDelegate
         gps = "Sin posición activa"
     }
 
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         let source = location.sourceInformation?.isSimulatedBySoftware == true ? "Simulada por software" : "Sin marca de simulación"
-        systemLocation = String(format: "%@\n%.6f, %.6f · edad %.1f s", source, location.coordinate.latitude, location.coordinate.longitude, max(0, -location.timestamp.timeIntervalSinceNow))
+        let message = String(format: "%@\n%.6f, %.6f · edad %.1f s", source, location.coordinate.latitude, location.coordinate.longitude, max(0, -location.timestamp.timeIntervalSinceNow))
+        Task { @MainActor [weak self] in self?.systemLocation = message }
     }
 
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        systemLocation = "Core Location: \(error.localizedDescription)"
+    nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        let message = "Core Location: \(error.localizedDescription)"
+        Task { @MainActor [weak self] in self?.systemLocation = message }
     }
 }

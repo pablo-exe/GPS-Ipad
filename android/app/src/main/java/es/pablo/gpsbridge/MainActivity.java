@@ -96,6 +96,9 @@ public final class MainActivity extends Activity implements LocationListener {
             connection.setText("Esperando iPad y señal GPS");
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             refresh.run();
+        } catch (SecurityException e) {
+            stop();
+            connection.setText("Permiso de ubicación revocado. Actívalo en Ajustes y vuelve a iniciar.");
         } catch (Exception e) {
             stop();
             connection.setText("No se pudo iniciar: " + e.getMessage());
@@ -140,7 +143,7 @@ public final class MainActivity extends Activity implements LocationListener {
         GpsServer current = server;
         server = null;
         if (current != null) current.close();
-        locations.removeUpdates(this);
+        try { locations.removeUpdates(this); } catch (SecurityException ignored) { }
         ui.removeCallbacks(refresh);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         toggle.setText("Iniciar GPS");
