@@ -37,7 +37,7 @@ final class ReceiverModel: NSObject, ObservableObject, CLLocationManagerDelegate
     private var cleanupTask: UIBackgroundTaskIdentifier = .invalid
     private var cleanupID = UUID()
     private var worker: InjectionWorker!
-    private var now: TimeInterval { ProcessInfo.processInfo.systemUptime }
+    private var now: TimeInterval { BridgeClock.now }
 
     private var pairingURL: URL {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("device.rppairing")

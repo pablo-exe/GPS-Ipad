@@ -26,7 +26,7 @@ final class InjectionWorker: @unchecked Sendable {
     private var retryAt: TimeInterval = 0
     private var cleanupUnknown = false
 
-    init(engine: DVTSession, now: @escaping @Sendable () -> TimeInterval = { ProcessInfo.processInfo.systemUptime },
+    init(engine: DVTSession, now: @escaping @Sendable () -> TimeInterval = { BridgeClock.now },
          report: @escaping @Sendable (String) -> Void) {
         self.engine = engine; self.now = now; self.report = report
     }

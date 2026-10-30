@@ -1,5 +1,15 @@
 import Foundation
 
+/// ContinuousClock includes system sleep; a suspended iPad must not rejuvenate a fix.
+enum BridgeClock {
+    private static let clock = ContinuousClock()
+    private static let origin = clock.now
+    static var now: TimeInterval {
+        let value = origin.duration(to: clock.now).components
+        return Double(value.seconds) + Double(value.attoseconds) / 1e18
+    }
+}
+
 enum StreamError: LocalizedError {
     case invalidFrame, oversized, unexpectedResponse, slowResponse
     var errorDescription: String? {
