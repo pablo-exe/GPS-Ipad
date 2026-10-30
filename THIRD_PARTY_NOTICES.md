@@ -38,10 +38,7 @@ module map distributed by Locus at the exact commit above, verified with
 SHA-256 in `scripts/prepare_ios_vendor.py`. The producing idevice source commit
 and full Rust dependency manifest are not identified by Locus's vendored
 directory; the binary provenance is pinned to that Locus commit, not claimed
-to be a reproducible idevice source build. iOS packages retain any linked
-dependency notices already present in the binary. Audit/rebuild of that
-vendored binary's complete transitive licensing remains a prerequisite for
-distribution beyond this technical MVP.
+to be a reproducible idevice source build.
 
 Copyright 2026 Jackson Coxson
 

@@ -34,6 +34,7 @@ struct GPSFrame: Decodable {
 struct ReceivedFix {
     let frame: GPSFrame
     let receivedAt: TimeInterval
+    let streamID: UUID
     func age(at now: TimeInterval) -> TimeInterval {
         (frame.age_ms ?? 2500) / 1000 + max(0, now - receivedAt)
     }

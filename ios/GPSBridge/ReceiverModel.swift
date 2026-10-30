@@ -82,7 +82,7 @@ final class ReceiverModel: NSObject, ObservableObject, CLLocationManagerDelegate
         buffer = LineBuffer(); latest = nil; lastSeq = 0
         lastBytesAt = ProcessInfo.processInfo.systemUptime
         transport = "Conectando al Android…"
-        if inject { worker.start(pairing: pairingURL.path, ip: tunnelIP, port: port); injection = "Esperando GPS reciente" }
+        if inject { worker.start(pairing: pairingURL.path, ip: tunnelIP, port: port, streamID: id); injection = "Esperando GPS reciente" }
         else { injection = "Solo recepción · inyección desactivada" }
         locations.requestWhenInUseAuthorization()
         locations.startUpdatingLocation()
@@ -130,7 +130,7 @@ final class ReceiverModel: NSObject, ObservableObject, CLLocationManagerDelegate
                                 self.gps = "Sin posición GPS válida"
                             } else if let seq = frame.seq, seq > self.lastSeq {
                                 self.lastSeq = seq
-                                let fix = ReceivedFix(frame: frame, receivedAt: ProcessInfo.processInfo.systemUptime)
+                                let fix = ReceivedFix(frame: frame, receivedAt: ProcessInfo.processInfo.systemUptime, streamID: id)
                                 self.latest = fix
                                 self.worker.mailbox.put(fix)
                                 self.transport = "Recibiendo GPS del Android"

@@ -10,7 +10,7 @@ func rejected(_ text: String) {
 }
 let valid = #"{"v":1,"type":"fix","seq":1,"lat":40.4168,"lon":-3.7038,"accuracy":5,"age_ms":500}"#
 let frame = try decode(valid)
-let fix = ReceivedFix(frame: frame, receivedAt: 100)
+let fix = ReceivedFix(frame: frame, receivedAt: 100, streamID: UUID())
 precondition(fix.isFresh(at: 101.99))
 precondition(!fix.isFresh(at: 102))
 precondition(!fix.isFresh(at: 200))

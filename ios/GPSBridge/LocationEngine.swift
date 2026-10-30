@@ -87,14 +87,14 @@ final class InjectionWorker: @unchecked Sendable {
 
     init(report: @escaping @Sendable (String) -> Void) { self.report = report }
 
-    func start(pairing: String, ip: String, port: UInt16) {
+    func start(pairing: String, ip: String, port: UInt16, streamID: UUID) {
         queue.async { [self] in
             timer?.cancel()
             lastSeq = nil
             failed = false
             let timer = DispatchSource.makeTimerSource(queue: queue)
             timer.schedule(deadline: .now(), repeating: .milliseconds(500))
-            timer.setEventHandler { [weak self] in self?.tick(pairing: pairing, ip: ip, port: port) }
+            timer.setEventHandler { [weak self] in self?.tick(pairing: pairing, ip: ip, port: port, streamID: streamID) }
             self.timer = timer
             timer.resume()
         }
@@ -120,9 +120,9 @@ final class InjectionWorker: @unchecked Sendable {
         }
     }
 
-    private func tick(pairing: String, ip: String, port: UInt16) {
+    private func tick(pairing: String, ip: String, port: UInt16, streamID: UUID) {
         guard !failed else { return }
-        guard let fix = mailbox.get(), fix.isFresh(at: ProcessInfo.processInfo.systemUptime) else {
+        guard let fix = mailbox.get(), fix.streamID == streamID, fix.isFresh(at: ProcessInfo.processInfo.systemUptime) else {
             if engine.isActive { clear(reason: "GPS caducado") }
             return
         }
@@ -133,14 +133,14 @@ final class InjectionWorker: @unchecked Sendable {
                 try engine.connect(pairingPath: pairing, ip: ip, port: port)
             }
             // Handshake may take seconds: re-read the mailbox; never inject the pre-handshake fix.
-            guard let newest = mailbox.get(), newest.isFresh(at: ProcessInfo.processInfo.systemUptime) else {
+            guard let newest = mailbox.get(), newest.streamID == streamID, newest.isFresh(at: ProcessInfo.processInfo.systemUptime) else {
                 clear(reason: "GPS caducó al conectar"); return
             }
             let started = ProcessInfo.processInfo.systemUptime
             try engine.set(newest)
             lastSeq = newest.frame.seq
             let ms = Int((ProcessInfo.processInfo.systemUptime - started) * 1000)
-            if mailbox.get()?.isFresh(at: ProcessInfo.processInfo.systemUptime) != true {
+            if mailbox.get().map({ $0.streamID == streamID && $0.isFresh(at: ProcessInfo.processInfo.systemUptime) }) != true {
                 clear(reason: "GPS caducó durante DVT")
             } else { report("DVT aceptó posición \(lastSeq ?? 0) · \(ms) ms") }
         } catch {

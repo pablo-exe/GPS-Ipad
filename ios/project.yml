@@ -11,7 +11,9 @@ targets:
   GPSBridge:
     type: application
     platform: iOS
-    sources: [GPSBridge]
+    sources:
+      - path: GPSBridge
+        excludes: ["**/Info.plist"]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: es.pablo.gpsbridge
