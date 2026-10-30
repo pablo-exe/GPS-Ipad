@@ -5,9 +5,9 @@ import urllib.request
 
 LOCUS_COMMIT = "83c8fb324983728e8f44759cfd834dc637ee38b5"
 FILES = {
-    "idevice.h": "7b6104244863e1648073117a64a199441865be038f0dfa468f9fc6361649ea18",
+    "idevice.h": "23b7a97ed37ebd9bc53e7620b9da8a9d1b5961f05252201462b7c5bd39e0fcc0",
     "libidevice_ffi.a": "05e6f58f082ee9f866a60763debe9b016e003005d424ac227b8d459686a2b575",
-    "module.modulemap": "6140333a8a6d6635e58dc4e4d360b5f68a3aef94850ebca87ca0cfffefc3eaa4",
+    "module.modulemap": "d98e25796e1135d892d81e6922a61e78e82b3d6c33322112e9eca1e089c7a300",
 }
 
 
