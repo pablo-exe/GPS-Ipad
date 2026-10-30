@@ -1,0 +1,16 @@
+.DS_Store
+.idea/
+.gradle/
+**/build/
+**/local.properties
+ios/*.xcodeproj/
+ios/Vendor/idevice/
+artifacts/
+*.ipa
+*.apk
+*.mobiledevicepairing
+*.mobiledevicepair
+*.rppairing
+*.p12
+*.mobileprovision
+__pycache__/
